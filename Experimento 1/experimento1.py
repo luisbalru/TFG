@@ -91,11 +91,12 @@ for j in range(X_shape):
     mean_score_slice = mean_score_slice/10
     accuracy_Xslices.append(mean_score_slice)
 
-f.open("planoX.txt","a")
+f = open("planoX.txt","a")
+f.write("X (Plano 0)")
 f.write(accuracy_Xslices)
 f.write("Max Slice: ",np.argmax(accuracy_Xslices))
 f.write("Accuracy: ", accuracy_Xslices[np.argmax(accuracy_Xslices)])
-
+f.close()
 print("Y (Plano 1)")
 
 
@@ -141,11 +142,13 @@ for j in range(Y_shape):
     mean_score_slice = mean_score_slice/10
     accuracy_Yslices.append(mean_score_slice)
 
-g.open("planoY.txt","a")
+g = open("planoY.txt","a")
+g.write("Y (Plano 1)")
 g.write(accuracy_Yslices)
 g.write("Max Slice: ",np.argmax(accuracy_Yslices))
 g.write("Accuracy: ", accuracy_Yslices[np.argmax(accuracy_Yslices)])
 
+print("Z (Plano 2)")
 
 Z_shape = pacientes[0].get_shape(2)
 accuracy_Zslices = []
@@ -189,7 +192,8 @@ for j in range(Z_shape):
     mean_score_slice = mean_score_slice/10
     accuracy_Zslices.append(mean_score_slice)
 
-h.open("planoZ.txt","a")
+h = open("planoZ.txt","a")
+h.write("Z (Plano 2)")
 h.write(accuracy_Zslices)
 h.write("Max Slice: ",np.argmax(accuracy_Zslices))
 h.write("Accuracy: ", accuracy_Zslices[np.argmax(accuracy_Zslices)])
