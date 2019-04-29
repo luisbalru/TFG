@@ -93,7 +93,9 @@ for j in range(X_shape):
 
 f = open("planoX.txt","a")
 f.write("X (Plano 0)")
-f.write(accuracy_Xslices)
+for i in range(len(accuracy_Xslices)):
+    f.write(accuracy_Xslices[i])
+
 f.write("Max Slice: ",np.argmax(accuracy_Xslices))
 f.write("Accuracy: ", accuracy_Xslices[np.argmax(accuracy_Xslices)])
 f.close()
@@ -144,7 +146,8 @@ for j in range(Y_shape):
 
 g = open("planoY.txt","a")
 g.write("Y (Plano 1)")
-g.write(accuracy_Yslices)
+for i in range(len(accuracy_Yslices)):
+    g.write(accuracy_Yslices[i])
 g.write("Max Slice: ",np.argmax(accuracy_Yslices))
 g.write("Accuracy: ", accuracy_Yslices[np.argmax(accuracy_Yslices)])
 
@@ -194,6 +197,7 @@ for j in range(Z_shape):
 
 h = open("planoZ.txt","a")
 h.write("Z (Plano 2)")
-h.write(accuracy_Zslices)
+for i in range(len(accuracy_Zslices)):
+    h.write(accuracy_Zslices[i])
 h.write("Max Slice: ",np.argmax(accuracy_Zslices))
 h.write("Accuracy: ", accuracy_Zslices[np.argmax(accuracy_Zslices)])
