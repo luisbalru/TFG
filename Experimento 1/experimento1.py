@@ -21,6 +21,9 @@ pacientes = []
 imagenes_pd = os.listdir('./Datos/PD')
 # Set the parameters by cross-validation
 
+
+#C_range = np.logspace(-2,10,13)
+#gamma_range = np.logspace(-9,3,13)
 C_range = np.logspace(-5, 15, 11)
 gamma_range = np.logspace(3, -15, 10)
 param_grid = dict(gamma=gamma_range, C=C_range)
@@ -53,7 +56,7 @@ X_shape = pacientes[0].get_shape(0)
 accuracy_Xslices = []
 
 for j in range(X_shape):
-    print("Slice ", j)
+    #print("Slice ", j)
     dataset = []
     target = []
     np.random.shuffle(pacientes)
@@ -68,7 +71,7 @@ for j in range(X_shape):
     dataset = scaler.fit_transform(dataset)
     X_train, X_test, y_train, y_test = train_test_split(dataset,target,test_size=0.3,random_state = 77145416)
     y_train = np.array(y_train)
-    pca = PCA(0.95)
+    pca = PCA(n_components = 0.95, svd_solver = 'full')
     pca.fit(X_train)
     X_train = pca.transform(X_train)
     X_test = pca.transform(X_test)
@@ -85,19 +88,19 @@ for j in range(X_shape):
         target_shuffle = y_train[indices]
         svm = SVC(C = clf.best_params_['C'],gamma = clf.best_params_['gamma'])
         svm.fit(dataset_shuffle,target_shuffle)
-        y_true, y_pred = y_test, clf.predict(X_test)
+        y_true, y_pred = y_test, svm.predict(X_test)
         mean_score_slice = mean_score_slice + accuracy_score(y_true,y_pred)
 
     mean_score_slice = mean_score_slice/10
     accuracy_Xslices.append(mean_score_slice)
 
-f = open('planoX-ns.txt','a')
+f = open('planoX-d.txt','a')
 f.write('X (Plano 0)')
 f.write(str(np.argmax(accuracy_Xslices)))
 f.write(str(accuracy_Xslices[np.argmax(accuracy_Xslices)]))
 f.close()
 accuracy_Xslices = np.array(accuracy_Xslices)
-accuracy_Xslices.tofile('accuracy_Xslices-ns.out',sep=",")
+accuracy_Xslices.tofile('accuracy_Xslices-d.out',sep=",")
 
 print("Y (Plano 1)")
 
@@ -121,7 +124,7 @@ for j in range(Y_shape):
     dataset = scaler.fit_transform(dataset)
     X_train, X_test, y_train, y_test = train_test_split(dataset,target,test_size=0.3,random_state = 77145416)
     y_train = np.array(y_train)
-    pca = PCA(0.95)
+    pca = PCA(n_components = 0.95, svd_solver = 'full')
     pca.fit(X_train)
     X_train = pca.transform(X_train)
     X_test = pca.transform(X_test)
@@ -138,18 +141,18 @@ for j in range(Y_shape):
         target_shuffle = y_train[indices]
         svm = SVC(C = clf.best_params_['C'],gamma = clf.best_params_['gamma'])
         svm.fit(dataset_shuffle,target_shuffle)
-        y_true, y_pred = y_test, clf.predict(X_test)
+        y_true, y_pred = y_test, svm.predict(X_test)
         mean_score_slice = mean_score_slice + accuracy_score(y_true,y_pred)
 
     mean_score_slice = mean_score_slice/10
     accuracy_Yslices.append(mean_score_slice)
 
-g = open("planoY-ns.txt","a")
+g = open("planoY-d.txt","a")
 g.write("Y (Plano 1)")
 g.write(str(np.argmax(accuracy_Yslices)))
 g.write(str(accuracy_Yslices[np.argmax(accuracy_Yslices)]))
 accuracy_Yslices = np.array(accuracy_Yslices)
-accuracy_Yslices.tofile('accuracy_Yslices-ns.out',sep=",")
+accuracy_Yslices.tofile('accuracy_Yslices-d.out',sep=",")
 
 print("Z (Plano 2)")
 
@@ -173,7 +176,7 @@ for j in range(Z_shape):
     dataset = scaler.fit_transform(dataset)
     X_train, X_test, y_train, y_test = train_test_split(dataset,target,test_size=0.3,random_state = 77145416)
     y_train = np.array(y_train)
-    pca = PCA(0.95)
+    pca = PCA(n_components = 0.95, svd_solver = 'full')
     pca.fit(X_train)
     X_train = pca.transform(X_train)
     X_test = pca.transform(X_test)
@@ -190,15 +193,15 @@ for j in range(Z_shape):
         target_shuffle = y_train[indices]
         svm = SVC(C = clf.best_params_['C'],gamma = clf.best_params_['gamma'])
         svm.fit(dataset_shuffle,target_shuffle)
-        y_true, y_pred = y_test, clf.predict(X_test)
+        y_true, y_pred = y_test, svm.predict(X_test)
         mean_score_slice = mean_score_slice + accuracy_score(y_true,y_pred)
 
     mean_score_slice = mean_score_slice/10
     accuracy_Zslices.append(mean_score_slice)
 
-h = open("planoZ-ns.txt","a")
+h = open("planoZ-d.txt","a")
 h.write("Z (Plano 2)")
 h.write(str(np.argmax(accuracy_Zslices)))
 h.write(str(accuracy_Zslices[np.argmax(accuracy_Zslices)]))
 accuracy_Zslices = np.array(accuracy_Zslices)
-accuracy_Zslices.tofile('accuracy_Zslices-ns.out',sep=",")
+accuracy_Zslices.tofile('accuracy_Zslices-d.out',sep=",")
