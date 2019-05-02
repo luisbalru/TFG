@@ -22,10 +22,10 @@ imagenes_pd = os.listdir('./Datos/PD')
 # Set the parameters by cross-validation
 
 
-#C_range = np.logspace(-2,10,13)
-#gamma_range = np.logspace(-9,3,13)
-C_range = np.logspace(-5, 15, 11)
-gamma_range = np.logspace(3, -15, 10)
+C_range = np.logspace(-2,10,13)
+gamma_range = np.logspace(-9,3,13)
+#C_range = np.logspace(-5, 15, 11)
+#gamma_range = np.logspace(3, -15, 10)
 param_grid = dict(gamma=gamma_range, C=C_range)
 
 scores = ['recall']
@@ -56,7 +56,7 @@ X_shape = pacientes[0].get_shape(0)
 accuracy_Xslices = []
 
 for j in range(X_shape):
-    #print("Slice ", j)
+    print("Slice ", j)
     dataset = []
     target = []
     np.random.shuffle(pacientes)
@@ -109,7 +109,7 @@ Y_shape = pacientes[0].get_shape(1)
 accuracy_Yslices = []
 
 for j in range(Y_shape):
-    #print("Slice ", j)
+    print("Slice ", j)
     dataset = []
     target = []
     np.random.shuffle(pacientes)
@@ -160,7 +160,7 @@ Z_shape = pacientes[0].get_shape(2)
 accuracy_Zslices = []
 
 for j in range(Z_shape):
-    #print("Slice ", j)
+    print("Slice ", j)
     dataset = []
     target = []
     np.random.shuffle(pacientes)
