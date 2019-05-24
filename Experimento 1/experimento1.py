@@ -27,6 +27,7 @@ gamma_range = np.logspace(-9,3,13)
 #C_range = np.logspace(-5, 15, 11)
 #gamma_range = np.logspace(3, -15, 10)
 param_grid = dict(gamma=gamma_range, C=C_range)
+#param_grid = {'C': [1e3, 5e3, 1e4, 5e4, 1e5],'gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1], }
 
 scores = ['recall']
 
@@ -69,7 +70,7 @@ for j in range(X_shape):
 
     scaler = StandardScaler()
     dataset = scaler.fit_transform(dataset)
-    X_train, X_test, y_train, y_test = train_test_split(dataset,target,test_size=0.3,random_state = 77145416)
+    X_train, X_test, y_train, y_test = train_test_split(dataset,target,test_size=0.3,random_state = 77145416,stratify = target)
     y_train = np.array(y_train)
     pca = PCA(n_components = 0.95, svd_solver = 'full')
     pca.fit(X_train)
@@ -122,7 +123,7 @@ for j in range(Y_shape):
 
     scaler = StandardScaler()
     dataset = scaler.fit_transform(dataset)
-    X_train, X_test, y_train, y_test = train_test_split(dataset,target,test_size=0.3,random_state = 77145416)
+    X_train, X_test, y_train, y_test = train_test_split(dataset,target,test_size=0.3,random_state = 77145416,stratify = target)
     y_train = np.array(y_train)
     pca = PCA(n_components = 0.95, svd_solver = 'full')
     pca.fit(X_train)
@@ -174,7 +175,7 @@ for j in range(Z_shape):
 
     scaler = StandardScaler()
     dataset = scaler.fit_transform(dataset)
-    X_train, X_test, y_train, y_test = train_test_split(dataset,target,test_size=0.3,random_state = 77145416)
+    X_train, X_test, y_train, y_test = train_test_split(dataset,target,test_size=0.3,random_state = 77145416,stratify = target)
     y_train = np.array(y_train)
     pca = PCA(n_components = 0.95, svd_solver = 'full')
     pca.fit(X_train)
