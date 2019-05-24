@@ -1,0 +1,219 @@
+\input{preambuloSimple.tex}
+\graphicspath{ {./images/} }
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{soul}
+
+
+%----------------------------------------------------------------------------------------
+%	TÍTULO Y DATOS DEL ALUMNO
+%----------------------------------------------------------------------------------------
+
+\title{	
+	\normalfont \normalsize 
+	\textsc{\textbf{Aprendizaje Automático (2019)} \\ Doble Grado en Ingeniería Informática y Matemáticas \\ Universidad de Granada} \\ [25pt] % Your university, school and/or department name(s)
+	\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+	\huge Memoria Práctica 3 \\ % The assignment title
+	\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+}
+
+\author{Luis Balderas Ruiz \\ \texttt{luisbalderas@correo.ugr.es}} 
+% Nombre y apellidos 
+
+
+\date{\normalsize\today} % Incluye la fecha actual
+
+%----------------------------------------------------------------------------------------
+% DOCUMENTO
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+	
+	\maketitle % Muestra el Título
+	
+	\newpage %inserta un salto de página
+	
+	\tableofcontents % para generar el índice de contenidos
+	
+	\listoffigures
+	
+	\listoftables
+	
+	\newpage
+
+
+
+
+\section{Contexto: Parkinson y Definición del Problema}
+
+En la actualidad, las enfermedades neurodegenerativas son una de las afecciones más preocupantes para el ser humano y, como tal, es uno de los campos de investigación más importantes que existen. Según \textit{Parkinson's Foundation \cite{pf}}, 46.8 millones de personas en todo el mundo conviven con algún tipo de demencia. Estudios anteriores preveían que, en el año 2020, 42.3 millones de ciudadanos estarían afectados por estas enfermedades. Sin embargo, la ratio de enfermos se ha superado en más de 4 millones un año antes de la fecha esperada, lo que genera una preocupación acuciante. El mismo estudio pronosticó que el número de pacientes con demencia se duplicará en los próximos 20 años. \\
+
+La demencia, a grandes rasgos, es un estado caracterizado por el deterioro de las funciones cerebrales. Este deterioro o pérdida de facultades da lugar a grandes inconvenientes en el día a día, llegando a extremos tan graves como la pérdida de la consciencia. Se estima que hay más de 10 millones de personas enfermos de Parkinson (en lo que sigue, PD) alrededor del mundo (\cite{wp}). Este hecho hace que la investigación de esta enfermedad en concreto sea muy relevante, dado que un diagnóstico precoz podría frenar el desarrollo de la misma. Desgraciadamente, actualmente no existe una cura para el Parkinson, pero sí hay medicamentos que inhiben su desarrollo, dándoles a los pacientes un mínimo de calidad de vida durante un periodo de tiempo más extenso. \\
+
+Los principales métodos de diagnóstico se fundamentan en resultados clínicos, basados en la evaluación médica a través de distintas pruebas al paciente. El diagnóstico actual recae en la presencia de anomalías o disfunciones motoras, signo de que el paciente sufre indudablemente un PD en estado avanzado. En dicho estado, la terapia neuroprotectora apenas produce mejorías sustanciales en los pacientes, por lo que es verdaderamente importante encontrar biomarcadores objetivos y válidos que ayuden a distinguir entre pacientes enfermos de PD de la población sana. \\
+
+En las dos décadas anteriores se adoptaron diversas medidas para el diagnóstico diferencial de PD, incluyendo pruebas olfativas, electrofisiológicas y neuropsicológicas \cite{pruebas-ant}. Sin embargo, neuroimagen es el área más desarrollada para enfrentar diagnósticos. Estos métodos incluye la Imagen de Resonancia Magnética (MRI). MRI es una tecnología no invasiva con una gran resolución espacio-temporal y ha sido enormemente utilizado para el estudio de disfunciones cerebrales de todo tipo. La gran cantidad de información que MRI nos da sobre los tejidos ha mejorado de forma muy sustancial el diagnóstico de patologías cerebrales y su tratamiento. Es conveniente señalar que la basta cantidad de información que nos da está lejos de poder ser procesada manualmente, por lo que urge el desarrollo de herramientas de análisis automatizado. Dicha necesidad hace nacer este proyecto, basado en la extracción de características de imágenes cerebrales para la clasificación de sujetos en enfermos de PD o grupo de control con la mayor exactitud posible.
+
+\subsection{Objetivos del proyecto}
+
+El objetivo principal de este proyecto es diseñar y desarrollar un sistema avanzado que clasifique pacientes en enfermos y sanos tras analizar y refinar datos provenientes de MRI, así como descubrir qué zonas del cerebro son las más determinantes en el diagnóstico de la enfermedad. \\
+
+Existen multitud de artículos en la literatura que llevan a cabo clasificación de pacientes enfermos y sanos. Dicha clasificación de enfermos de Alzheimer o Parkinson suelen estar basadas en la evaluación de las capacidades motoras de los individuos. Sin embargo, este enfoque sobre Parkinson utilizando MRI es novedoso. De la misma manera, utilizaremos métodos de extracción y selección de características, en particular transformada Wavelets 2D y PCA (Análisis de Componentes Principales). Este enfoque ha sido previamente sugerido por otros investigadores (\cite{aggarwal}, \cite{iman}, \cite{deepa}, \cite{mohd}, \cite{rajesh}, \cite{michel}, \cite{jing}, \cite{yudong}, \cite{irojas}, \cite{alberto}). \\
+
+Finalmente, la mayoría de las investigaciones exploran las regiones identificadas por expertos médicos. En este proyecto, nuestro interés es encontrar los planos más relevantes para la clasificación de enfermos de PD. Para ello, existen muchas técnicas de optimización disponible: Optimización por Colonia de Hormigas, Algoritmo de Búsqueda Gravitacional, algoritmo genético NSGA-II. En mi caso, enfoco el problema de una manera totalmente diferente utilizando un ensemble learner basado en Stacking, donde en las primeras capas utilizo SVM con GridSearch para configurar los hiperparámetros y en la segunda, regresión logística (en búsqueda de interpretabilidad).
+
+\subsection{Experimentos}
+
+En la realización del proyecto utilizamos diferentes algoritmos y métodos, incluyendo preprocesamiento de imágenes, extracción, selección de características, clasificación y optimización de los resultados. Los experimentos designados son los siguientes:
+
+\begin{itemize}
+	\item El primer experimento fue determinar qué plano de una imagen MRI es más importante en la clasificación de los sujetos. Las imágenes MRI tienen tres planes: X (axial), Y (coronal) y Z (sagittal). Para reducir el tiempo computacional, seleccionamos el plano con los cortes más interesantes.
+	
+	\item En el segundo experimento, elegido ya el plano correspondiente, comparo el rendimiento de la materia gris, materia blanca y el materia completa para ahorrar costes y mejorar la clasificación.
+	
+	\item Para la extracción de características, utilizo la transformada discreta Wavelet en 2D.
+	
+\end{itemize}
+
+
+\section{Enfermdad de Parkinson y sus estados}
+
+\subsection{Contexto global}
+
+\textit{Parkinson's Foundation} (\cite{pf}) describe el Parkison como sigue: \\
+
+`` El Parkinson es un desorden neurodegenerativo que causa la muerte de las neuronas dopaminérgicas (neurotrasmisores que producen y secretan dopamina) de un área concreta del cerebro llamada \textit{substantia nigra pars compacta (SNpc)}.''
+
+Esta estructura se encuentra localizada en el mesencéfalo y debe su color y su nombre ala presencia de un pigmento llamado neuromelanina que se encuentra dentro de las neuronas que lo forman. 
+
+\begin{figure}[H]
+	\begin{minipage}[b]{0.5\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{sub-n.png}
+		\caption{Susbtantia nigra}
+		\label{fig:subs-nig}
+	\end{minipage}
+	\hspace{0.5cm}
+	\begin{minipage}[b]{0.5\linewidth}
+		\centering
+		\includegraphics[width=\linewidth]{mesenc.png}
+		\caption{Mesencéfalo}
+		\label{fig:mesenc}
+	\end{minipage}
+\end{figure}
+
+
+
+Estas neuronas dopaminérgicas tienen principalmente la función de regular la actividad motora por medio de la síntesis y la secreción de dopamina, por lo que cuando mueren se manifiestan los típicos signos de la enfermedad que nos resultan familiares: temblores, lentitud en el movimiento (bradiquinesia), inestabilidad, caídas frecuentes... A nivel macroscópico esto se manifiesta en la pérdida de pigmentación característica de la SNpc.
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.4]{pigme.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Pérdida de la pigmentación} 
+	\label{fig:pigmentacion}
+\end{figure}
+
+Cabe destacar que en las neuronas supervivientes, a nivel microscópico se observan los característicos cuerpos de Lewy, que son unas ``bolsitas'' de proteínas que se acumulan en el citoplasma o cuerpo de la célula.
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.3]{cito.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Cuerpos de Lewy en el citoplasma} 
+	\label{fig:lewy}
+\end{figure}
+
+\subsection{Corteza cerebral y ganglio basal}
+
+La primera capa que nos encontramos al explorar el cerebro humano es la materia dura, esto es, una membrana que envuelve al cerebro, siendo la última capa de las meninges, cubriendo y por tanto protegiendo el cerebro y la médula espinal. Bajo esta membrana encontramos el cortex, formado por millones de neuronas de un color gris claro (la materia gris) organizadas en seis capas de entre dos y cuatro milímetros de grosor. La corteza cerebral juega un papel trascendental en la conciencia, el pensamiento, el lenguaje, la memoria, la percepción y la atención. La materia gris es una componete muy importante de nuestro sistema nervioso central. Por otra parte, la matria blanca está formada por axones que interconectan las neuronas en diferentes regiones de la corteza y del sistema nervioso central. \\
+
+La corteza cerebral se divide en cuatro lóbulos: \\
+
+\begin{itemize}
+	\item Lóbulo temporal: Clave en la percepción auditiva, comprensión del lenguaje, memoria y aprendizaje. Contiene el hipocampo.
+	\item Lóbulo frontal: Corteza motora primaria, contiene también la mayoría de las neuronas dopaminérgicas en el cortex.
+	\item Lóbulo pariental: esencial para la visión espacial, la navegación y el sentido del tacto.
+	\item Lóbulo occipital: Cortex viaul primario, responsable de la creación de los sueños.
+\end{itemize}
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.6]{bl.jpg}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Lóbulos de la corteza cerebral} 
+	\label{fig:bl}
+\end{figure}
+
+Las neuronas dopaminérgicas de la SNpc proyectan sus axones hacia el ganglio basal, formando así el sistema dopaminérgico nigroestriatal. El ganglio basal, que se encuentra en estrecha relación con la SNpc, está descrito como la estructura cerebral más afectada por PD. Cumple un papel esencial tanto en la ejecución de movimientos voluntarios como en actividades cognitivas, por lo que su deterior asociado a PD afectará a estas funciones. \\
+
+El ganglio basal puede verse afectado según el subtipo de la enfermedad. Hay algunos enfermos que sufren cambios microestructurales en la substantia nigra mientras que en otros apenas se aprecia. En general, el ganglio basal acaba por atrofiarse. 
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.6]{gb.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Ganglio basal} 
+	\label{fig:gb}
+\end{figure}
+
+Según \cite{wp}, los pacientes de PD muestran anisotropía fraccional reducida en la substantia nigra y aumento de la difusividad media y radial en la substantia nigra y el globo pálido (parte del ganglio basal), cuyos efectos pueden verse en técnicas de imagen tales como tractografías.
+
+\subsection{Estadios del Parkinson}
+
+La enfermedad de Parkinson afecta al ser humano de muy distintas maneras. Los enfermos no tienen por qué sufrir los mismos síntomas y, si lo hicieran, tampoco tienen por qué experimentarlos en el mismo orden ni con la misma intensidad. Sin embargo, existen algunos patrones típicos en el progreso de la enfermedad divididos en estadios \cite{wp}:
+
+\begin{itemize}
+	\item Estadio uno: Durante este estado inicial, la persona tiene síntomas menores que no interfieren en su vida diaria. Pueden darse temblores y movimientos involuntarios en un lado del cuerpo. De igual manera, se producen cambios posturales, en la forma de andar y en la expresión facial.
+	\item Estadio dos: Los síntomas empeoran. Aparecen temblores, rigidez y movimientos involuntarios en ambos lados del cuerpo.
+	\item Estadio tres: Considerado el estadio medio, se caracteriza por la ralentización de los movimientos y la pérdida del equilibrio. Las caídas empiezan a ser comunes.
+	\item Estadio cuatro: En este punto, los síntomas son severos. Es posible permanecer de pie sin ayuda, pero en general se necesita un andador para desplazarse. La persona es incapaz de vivir sola y requiere asistencia.
+	\item Estadio cinco: Este es el estadio más avanzado. Es imposible andar o ponerse de pie por la debilidad en las piernas. La persona requiere silla de ruedas y asistencia total para todas las actividades.
+\end{itemize}
+
+\subsection{Consecuencias en el cerebro}
+
+Como hemos comentado, PD afecta a la substantia nigra. También reduce diferentes regiones de la materia gris en el lóbulo temporal. En la figura 2.7 podemos ver una resonancia magnética de un sujeto sano mientras que en la figura 2.8 vemos a un enfermo. Se puede observar la reducción de la materia gris en cada plano  e incluso su desaparición en algunas zonas.
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.35]{healthy.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{MRI de un sujeto sano} 
+	\label{fig:healthy}
+\end{figure}
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.34]{unhealthy.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{MRI de un sujeto enfermo de PD. Véase la pérdida de materia gris} 
+	\label{fig:unhealthy}
+\end{figure}
+
+\section{}
+
+
+
+
+\newpage
+\section{Bibliografía}
+
+%------------------------------------------------
+
+\bibliography{bibliografia} %archivo citas.bib que contiene las entradas 
+\bibliographystyle{unsrt} % hay varias formas de citar
+
+\end{document}
+
+
+%----------------------------------------------------------------------------------------
+%	ANEXOS
+%----------------------------------------------------------------------------------------
+
+\appendix
+\clearpage
+\addappheadtotoc
+\appendixpage
+
+\chapter{Matriz de consistencia}
+
+\chapter{Anexo para respaldo de la investigación}
+
+\end{document} 
+
+
