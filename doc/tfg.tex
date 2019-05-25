@@ -76,7 +76,7 @@ En la realización del proyecto utilizamos diferentes algoritmos y métodos, inc
 \end{itemize}
 
 
-\section{Enfermdad de Parkinson y sus estados}
+\section{Enfermedad de Parkinson y sus estados}
 
 \subsection{Contexto global}
 
@@ -185,7 +185,79 @@ Como hemos comentado, PD afecta a la substantia nigra. También reduce diferente
 	\label{fig:unhealthy}
 \end{figure}
 
-\section{}
+\section{Conceptos y herramientas matemáticas}
+
+En la presente sección discutimos los diferentes conceptos y herramientas utilizadas en este proyecto. Más allá de utilizar la multitud de técnicas que existen dentro de la ciencia de datos aplicada a la biomedicina, mi intención es profundizar desde un punto de visto matemático sus fundamentos y las garantías de su uso. Primero, introduzco la imagen de resonancia magnética (MRI) y la normalización aplicada a las imágenes para los distintos experimentos. A continuación, trataré el concepto de característica en ciencia de datos y me detendré en las herramientas utilizadas para la extracción (transformada discreta Wavelets 2D) y selección (PCA) de las mismas. Por último, abordamos el tema de la clasificación, explicando el algoritmo SVM y las optimizaciones propuestas para la mejora del rendimiento,  interpretabilidad y validez de la investigación.
+
+\subsection{Resonancia magnética nuclear}
+
+Antes de trabajar con imágenes MRI, es necesario tener conocimiento sobre cómo se obtienen, así que introducimos los conceptos más importantes de la resonancia magnética nuclear (NMR \cite{nmr}). Se trata de un método de imagen no invasivo que tiene como objetivo obtener información sobre la estructura y composición de un material. Es muy utilizado en medicina para recabar información sobre tejidos y observar alteraciones o degradaciones de los mismos. \\
+
+NMR es un fenómeno físico basado en las propiedades cuántico-mecánicas del núcleo atómico. Primero, el \textit{spin} (momento angular intrínseco \cite{spin}) de una partícula es un vector asociado al momento magnético de la misma. Tiene una dirección (el eje del \textit{spin}) y un sentido. Cuando dos o más partículas tienen \textit{spin} opuestos están pareadas, la suma de sus momentos es cero y, por tanto, no se produce manifestación alguna del \textit{spin}. Este es el estado natural de los momentos magnéticos en el cuerpo ya que el núcleo de los átomos y sus respectivos electrones están pareados. Sin embargo, podemos encontrar en el cuerpo isótopos con \textit{spin} distinto de cero, siendo los más comunes los de hidrógeno ya que la mayoría de los tejidos contienen agua. La manipulación del \textit{spin} es lo que permite a la máquina de resonancia magnética encontrar las diferencias entre las orientaciones y construir una imagen. Usando campos magnéticos, los núcleos de hidrógeno se alinean magnéticamente, produciéndose este cambio en las alineaciones en un tiempo T1. En presencia de un campo magnético externo, existen dos tipos de orientaciones para el \textit{spin} nuclear:
+
+\begin{itemize}
+	\item Paralela, en la que el sentido del momento magnético es el mismo para la partícula y para el campo magnético externo.
+	\item Anti-paralelo, cuando ambos dos tienen sentido contrario.
+\end{itemize}
+
+Como se muestra en la Figura 3.1, la suma de los momentos magnéticos de un grupo de núcleos de hidrógeno puede ser representado como un vector M paralelo al campo magnético externo $B_0$, donde las componentes normales de los diferentes \textit{spin} se cancelan mutuamente. La mayoría de los \textit{spin} adoptan la orientación paralela, por lo que la suma de los \textit{spins} de M es paralela a $B_0$. \\
+
+M puede ser manipulado usando señales de radio frecuencia. Cuando se aplican, los núcleos absorben la energía y una porción de ella se emite más tarde. Esa es la señal que se detecta. Dependiendo de la intensidad de los campos magnéticos, se pueden obtener imagénes con distintas resoluciones.
+
+ \begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+ 	\centering
+ 	\includegraphics[scale=0.34]{nmr.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+ 	\caption{Funcionamiento de los campos magnéticos, spin y NMR} 
+ 	\label{fig:nmr}
+ \end{figure}
+
+\subsection{Normalización}
+
+Antes de manipular o extraer información, es fundamental normalizar el conjunto de datos completo para poder comparar las imágenes. Cada imagen MRI debería representar el mismo espacio, i.e., cada región de la imagen debe describir la misma región del cerebro. Los ventrículos cerebrales deben estar situados en las mismas coordenadas para cada imagen de cada paciente. \\
+
+Dado que los cerebros pueden variar mucho entre pacientes, este objetivo es difícil de conseguir ya que las herencia genética y la vida de cada paciente haga que cada uno tenga sus peculiaridades. Por tanto, debemos tener en cuenta dos ideas a cumplir:
+
+\begin{itemize}
+	\item Normalizar la escala de grises de las imágenes para que todas estén en la misma escala.
+	\item Redimensionar las imágenes para que todas tengan las mismas medidas.
+\end{itemize}
+
+Para completar estas dos tareas, nos remitimos a una plantilla estándar. Para la normalización, utilizamos Statistical Parametric Mapping (SPM \cite{spm}), que es un algoritmo que analiza cada \textit{voxel} usando un test estadístico estándar. Lo utilizamos dada su gran efectividad y su librería de Matlab (a pesar de que el resto del proyecto se realiza en Python). Los valores de los \textit{voxel} son distribuidos de acuerdo a una función de densidad, que suele provenir de las distribuciones T de Student o F. En la Figura 3.2 podemos ver un ejemplo de una imagen antes y después de la normalización.
+
+ \begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.6]{norm.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{A la izquierda, imagen MRI sin normalizar. A la derecha, resultado de la normalización} 
+	\label{fig:norm}
+\end{figure}
+
+\subsection{Características}
+
+Una de las partes más importantes de un proyecto de inteligencia artificial es la extracción de características. Una característica puede ser entendida como una componente de un vector, que representaría los datos. Cada elemento o individuo del dataset sería representado por un vector n-dimensional (una matriz) en la que cada componente sería una característica. Esta forma de representación es muy intuitiva y flexible ya que permite la introducción y aplicación de conceptos y herramientas matemáticas. \\
+
+El dataset completo sería definido, una vez que cada elemento está representado por sus características, como un conjunto de vectores de $m$ componentes
+
+$$F_i = [f_1,f_2,\dots,f_m]$$
+
+En la expresión, $F_i$ sería un único vector (un paciente) y $f_i$ sus características. Por tanto, si tenemos un grupo de pacientes:
+
+$$F =  \begin{pmatrix}
+F_{1} \\
+F_{2} \\
+\vdots \\
+F_{n}
+\end{pmatrix} = \begin{pmatrix}
+f_{11}& f_{12}& \dots& f_{1m} \\
+f_{21}&f_{22}&\dots&f_{2m} \\
+\vdots& \vdots& \ddots& \vdots \\
+f_{n1}&f_{n2}&\dots&f_{nm}
+\end{pmatrix}$$
+
+\subsubsection{Extracción de características}
+
+Cuando se trabaja con MRI, se tiene un número de imágenes de $157\times189\times136$ en los planos X,Y y Z respectivamente, por lo que tenemos 157*189*136 = 4.035.528 \textit{voxels} con 255 valores posibles. De esta manera encontraríamos más de mil millones de características. Necesitamos, por tanto, reducir el espacio de posibilidades, es decir, disminuir la cantidad de recursos necesaria para describir nuestro conjunto de datos. \\
+
+En general, una buena estrategia para extraer características de una imagen es convertirla a un dominio diferente. Con ese objetivo, introducimos ahora dos opciones distintas: la transformada de Fourier y la transformada Wavelets (que finalmente utilizaremos).
 
 
 
@@ -210,9 +282,7 @@ Como hemos comentado, PD afecta a la substantia nigra. También reduce diferente
 \addappheadtotoc
 \appendixpage
 
-\chapter{Matriz de consistencia}
 
-\chapter{Anexo para respaldo de la investigación}
 
 \end{document} 
 
