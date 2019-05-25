@@ -13,6 +13,8 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegressionCV
+
 
 pacientes = []
 imagenes_pd = os.listdir('./Datos/PD')
@@ -64,46 +66,85 @@ pacientes_test = []
 np.random.shuffle(pacientes)
 
 for i in range(len(pacientes)):
-    if paciente[i].get_label() == 0:
+    if pacientes[i].get_label() == 0:
         if train_enfermos <= 114:
             train_enfermos = train_enfermos + 1
-            pacientes_training.append(paciente[i])
+            pacientes_training.append(pacientes[i])
         else:
             test_enf = test_enf + 1
-            pacientes_test.append(paciente[i])
+            pacientes_test.append(pacientes[i])
     else:
         if train_sanos <= 50:
             train_enfermos = train_enfermos + 1
-            pacientes_training.append(paciente[i])
+            pacientes_training.append(pacientes[i])
         else:
             test_enf = test_enf + 1
-            pacientes_test.append(paciente[i])
+            pacientes_test.append(pacientes[i])
 
-
+dataset_final = []
+target_final = []
 
 Y_shape = pacientes_training[0].get_shape(1)
 
 for i in range(Y_shape):
     print("Slice ", i)
     dataset = []
+    # *_t para pacientes del test y configurar el dataset de la segunda parte
+    dataset_t = []
     target = []
+    target_t = []
     np.random.shuffle(pacientes_training)
+    np.random.shuffle(pacientes_test)
     for j in range(len(pacientes_training)):
-        slice = pacientes[j].get_slice(1,i)
-        label = pacientes[j].get_label()
-        row = pacientes[j].get_wave2D(slice,'bior3.3',2)
+        slice = pacientes_training[j].get_slice(1,i)
+        label = pacientes_training[j].get_label()
+        row = pacientes_training[j].get_wave2D(slice,'bior3.3',2)
         dataset.append(row)
         target.append(label)
 
+    for k in range(len(pacientes_test)):
+        slice = pacientes_test[k].get_slice(1,i)
+        label = pacientes_test[k].get_label()
+        row =  pacientes_test[k].get_wave2D(slice,'bior3.3',2)
+        dataset_t.append(row)
+        target_final.append(label)
+
     scaler = StandardScaler()
     dataset = scaler.fit_transform(dataset)
-    X_train, X_test, y_train, y_test = train_test_split(dataset,target,test_size = 0.2,stratify = target)
-    y_train = np.array(y_train)
+    X_train = dataset
+    y_train = target
     pca = PCA(n_components = 0.95, svd_solver = 'full')
     pca.fit(X_train)
     X_train = pca.transform(X_train)
-    X_test = pca.transform(X_test)
     for score in scores:
         clf = GridSearchCV(SVC(kernel='rbf',class_weight = 'balanced'),param_grid = param_grid, cv=10,scoring = '%s_macro' % score)
         clf.fit(X_train,y_train)
-"""
+        pred = clf.predict(dataset_t)
+        np.append(dataset_final,pred,axis=1)
+
+X_train, X_test, y_train, y_test = train_test_split(dataset_final,target_final, test_size = 0.2,stratify = target_final)
+lr = LogisticRegressionCV(cv=10,multi_class='multinomial').fit(X_train,y_train)
+sc_training = lr.score(X_train,y_train)
+sc_test = lr.score(X_test,y_test)
+params_lr = lr.get_params()
+name_scores = "scores.txt"
+name_params = "params.txt"
+name_prob = "probs.txt"
+
+scores = open(name_scores,"a")
+scores.write("Score para training: ")
+scores.write(str(sc_training))
+scores.write("\n")
+scores.write("Score para test: ")
+scores.write(str(sc_test))
+scores.close()
+
+params = open(name_params,"a")
+params.write(str(params_lr))
+params.close()
+
+mat = lr.coef_
+with open(name_prob,'w') as f:
+        for line in mat:
+            f.write(str(line))
+            f.write("\n")
