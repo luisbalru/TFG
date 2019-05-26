@@ -116,12 +116,17 @@ for i in range(Y_shape):
     pca = PCA(n_components = 0.95, svd_solver = 'full')
     pca.fit(X_train)
     X_train = pca.transform(X_train)
+    pca2 = PCA(n_components = 0.95, svd_solver = 'full')
+    pca2.fit(dataset_t)
+    dataset_t = pca.transform(dataset_t)
     for score in scores:
         clf = GridSearchCV(SVC(kernel='rbf',class_weight = 'balanced'),param_grid = param_grid, cv=10,scoring = '%s_macro' % score)
         clf.fit(X_train,y_train)
         pred = clf.predict(dataset_t)
-        np.append(dataset_final,pred,axis=1)
+        dataset_final.append(pred)
 
+dataset_final =  np.array(dataset_final)
+dataset_final = dataset_final.transpose()
 X_train, X_test, y_train, y_test = train_test_split(dataset_final,target_final, test_size = 0.2,stratify = target_final)
 lr = LogisticRegressionCV(cv=10,multi_class='multinomial').fit(X_train,y_train)
 sc_training = lr.score(X_train,y_train)
