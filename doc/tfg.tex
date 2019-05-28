@@ -3,6 +3,7 @@
 \usepackage{subcaption}
 \usepackage{hyperref}
 \usepackage{soul}
+\usepackage{amssymb}
 
 
 %----------------------------------------------------------------------------------------
@@ -257,11 +258,165 @@ f_{n1}&f_{n2}&\dots&f_{nm}
 
 Cuando se trabaja con MRI, se tiene un número de imágenes de $157\times189\times136$ en los planos X,Y y Z respectivamente, por lo que tenemos 157*189*136 = 4.035.528 \textit{voxels} con 255 valores posibles. De esta manera encontraríamos más de mil millones de características. Necesitamos, por tanto, reducir el espacio de posibilidades, es decir, disminuir la cantidad de recursos necesaria para describir nuestro conjunto de datos. \\
 
-En general, una buena estrategia para extraer características de una imagen es convertirla a un dominio diferente. Con ese objetivo, introducimos ahora dos opciones distintas: la transformada de Fourier y la transformada Wavelets (que finalmente utilizaremos).
+En general, una buena estrategia para extraer características de una imagen es convertirla a un dominio diferente. Con ese objetivo, introducimos ahora dos opciones distintas: la transformada de Fourier y la transformada Wavelets (que finalmente utilizaremos). Todo el material aquí recogido proviene de multitud de textos. Son los siguientes: \cite{math-image}
+
+\begin{itemize}
+	\item \textbf{La Transformada de Fourier en $L^1(\mathbb{R}^d)$}
+	
+	Dado que la transformada de Fourier es, de forma natural, una función que toma valores en los complejos, asumimos que
+	$$u: \mathbb{R}^d \mapsto \mathbb{C}$$
+	
+	\textbf{Definición 1.} Sea $u \in L^1(\mathbb{R}^d)$ y $\xi \in \mathbb{R}^d$. Se define la transformada de Fourier de $u$ en $\xi$ como 
+	
+	$$(F u)(\zeta) = \hat{u}(\xi) = \frac{1}{(2\pi)^{d/2}} \int_{\mathbb{R}^d} u(x) e^{-ix\xi}dx$$
 
 
+Además, podemos introducir uno de los teoremas más importantes de la transformada de Fourier: el teorema de Convolución: 
+
+\textbf{Teorema de Convolución.} Para $u, v \in L^1(\mathbb{R}^d)$,
+
+$$ F(u*v) = (2\pi)^{d/2}F(u)F(v)$$
+
+\textbf{Demostración.}
 
 
+Aplicando el teorema de Fubini, obtenemos
+
+$$F(u*v)(\xi) = \frac{1}{(2\pi)^{d/2}} \int_{\mathbb{R}^d} \int_{\mathbb{R}^d} u(y) v(x-y) dy\text{ } e^{-ix\xi} dx = $$
+$$ == \frac{1}{(2\pi)^{d/2}} \int_{\mathbb{R}^d} \int_{\mathbb{R}^d} u(y)e^{-iy\xi}v(x-y)e^{-i(x-y)\xi}dxdy$$
+$$ = \int_{\mathbb{R}^d} u(y) e^{-iy\xi} dy F(v)(\xi)$$
+$$ = (2\pi)^{d/2}F(u)F(v)(\xi)$$
+
+\hfill$\blacksquare$
+
+A pesar de este resultado, nos será de gran utilidad extender el concepto de transformada de Fourier al espacio de Hilbert $L^2(\mathbb{R}^d)$.
+
+\item \textbf{La Transformada de Fourier en $L^2(\mathbb{R}^d)$}
+
+La extensión de la transformada de Fourier al espacio $L^2(\mathbb{R}^d)$ requiere un poco más de esfuerzo. En primer lugar, definimos un ``pequeño'' espacio de funciones donde la transformada exhibe ciertas propiedades interesantes: el espacio de Schwartz:
+
+\textbf{Definición 2.} El espacio de Schwartz se define como 
+
+$$S(\mathbb{R}^d) = \{u \in C^\infty(\mathbb{R}) | \forall \alpha,\beta \in \mathbb{N}^d: C_{\alpha,\beta}(u) = sup_{x \in \mathbb{R}^d} |x^\alpha \frac{\partial^\beta}{\partial x^\beta}u(x)| < \infty \}$$
+
+Una función $u \in S(\mathbb{R}^d)$ se le llama una función de Schwartz.\\
+
+\textit{Grosso modo}, el espacio de Schwartz contiene funciones suaves que tienden a cero más rápido que los polinomios a infinito. Puede verificarse de forma elemental que el espacio de Schwartz es un espacio vectorial. Con el objetivo de hacerlo accesible por métodos analíticos, lo dotamos de una topología. Describimos dicha topología definiendo una noción de \\convergencia para sucesiones de funciones.
+
+\textbf{Definición 3.} Una sucesión de funciones de Schwartz ${u_n}$ converge a $u$ si y sólo si, para todo multi-índice $\alpha, \beta$, se tiene que 
+
+$$C_{\alpha,\beta}(u_n - u) \mapsto 0 \text{    cuando } n \mapsto \infty$$
+
+La convergencia en el espacio de Schwartz es muy restrictiva: una sucesión de funciones converge si ella y todas sus derivadas multiplicadas por monomios arbitrarios convergen uniformemente. 
+
+Los siguientes lemas serán necesarios en el desarrollo del tema:
+
+\textbf{Lema 1.} El espacio de Schwartz es no vacío y cerrado con respecto a la derivación de cualquier orden y la multiplicación usual.
+
+\textbf{Demostración.} Para $u \in S(\mathbb{R}^d)$, para todo multi-índice $\gamma$, tenemos 
+
+$$C_{\alpha,\beta}(\frac{\partial^\gamma}{\partial x^\gamma}u) = C_{\alpha,\beta+\gamma}(u) < \infty$$
+
+y por tanto $\frac{\partial^\gamma}{\partial x^\gamma}u \in S(\mathbb{R}^d)$. \\
+
+El hecho de que dadas $u, v \in S(\mathbb{R}^d)$, $uv \in S(\mathbb{R}^d)$ puede probarse vía la regla de Leibniz para multi-índices.
+
+\hfill$\blacksquare$
+
+El espacio de Schwartz está muy relacionado con la transformada de Fourier. El siguiente lema presenta reglas de cálculo para transformadas de Fourier sobre funciones de Schwartz.
+
+\textbf{Lema 2.} Sea $u \in S(\mathbb{R}^d), \alpha \in \mathbb{N}^d$ un multi-índice. Se define $p^\alpha(x) = x^\alpha$. Entonces
+
+$$F(\frac{\partial^\alpha u}{\partial x^\alpha}) = i^{|\alpha|}p^\alpha F(u)$$
+
+$$F(p^\alpha u) = i^{|\alpha|} \frac{\partial^\alpha }{\partial x^\alpha} F(u)$$
+
+\textbf{Demostración.}
+	Comenzamos con los siguientes cálculos auxiliares:
+	
+	$$\frac{\partial^\alpha }{\partial x^\alpha} (e^{-ix\xi}) = (-i)^{|\alpha|} \xi^\alpha e^{-ix\xi}$$
+	
+	$$x^\alpha e{ix\xi} = i^{|\alpha|}\frac{\partial^\alpha}{\partial \xi^\alpha}(e^{-ix\xi})$$
+	
+	Aplicando integración por partes, obtenemos
+	
+	$$F(\frac{\partial^\alpha}{\partial x^\alpha}u)(\xi) = \frac{1}{(2\pi)^{d/2}}\int_{\mathbb{R}^d} \frac{\partial^\alpha}{\partial x^\alpha} u(x) e^{-ix\xi}dx$$
+	$$= \frac{1}{(2\pi)^{d/2}} i^{|\alpha|}\xi^\alpha \int_{\mathbb{R}^d} u(x) e^{-ix\xi}dx$$
+	$$=i^{|\alpha|} p^\alpha Fu(\xi)$$
+	
+Intercambiando el orden de la integración y la derivación, llegamos a
+
+$$F(p^\alpha u)(\xi) = \frac{1}{(2\pi)^{d/2}}\int_{\mathbb{R}^d} u(x)x^\alpha e^{-ix\xi}dx$$
+$$=\frac{1}{(2\pi)^{d/2}}\int_{\mathbb{R}^d} u(x)\frac{\partial^\alpha}{\partial \xi^\alpha}e^{-ix\xi}dx$$
+$$=i^{|\alpha|}(\frac{\partial^\alpha}{\partial \xi^\alpha}Fu)(\xi)$$
+
+Los argumentos anteriores son válidos dado que los integrandos son infinitamente derivables respecto a $\xi$ e integrables respecto a $x$.
+
+\hfill$\blacksquare$
+
+Observamos que la transformada de Fourier lleva diferenciación a multiplicación y viceversa. Esto nos lleva a que el espacio de Schwartz va a sí mismo vía la transformada de Fourier. Veámoslo:\\
+
+\textbf{Lema 3.} Para la función $G(x) = e^{-\frac{|x|^2}{2}}$, se tiene que 
+
+$$\hat{G}(\xi) = G(\xi)$$
+
+es decir, la función Gaussiana es una función propia de la transformada de Fourier correspondiente al valor propio uno.
+
+\textbf{Demostración}
+
+La función Gaussiana se puede escribir como un producto tensorial de Gaussianas unidimensionales $g:\mathbb{R} \mapsto \mathbb{R}, g(t) = exp(-t^2/2)$ de forma que $G(x) = \prod_{k=1}^{d} g(x_k)$. Por el teorema de Fubini,
+
+$$\hat{G}(\xi) = \frac{1}{(2\pi)^{d/2}} \int_{\mathbb{R}^d} \prod_{k=1}^{d} g(x_k) e^{-i x_k \xi_k} dx = \prod_{k=1}^{d} \hat{g}(\xi_k)$$
+
+Para calcular la transformada de Fourier de $g$, tengamos en cuenta que $g$ satisface la ecuación diferencial $g'(t) = -t g(t)$. Aplicando la transformada de Fourier en esa ecuación, por el Lema 2 obtenemos $-\omega \hat{g}(\omega) = \hat{g}'(\omega)$. De hecho, $\hat{g}(0) = \int_{\mathbb{R}}g(t) dt = 1 = g(0)$. Por tanto, las funciones $g,\hat{g}$ satisfacen la misma ecuación diferencial con el mismo valor inicial. Por el teorema de unicidad de soluciones en problemas de valores iniciales de Picard-Lindelöf, $g = \hat{g}$.
+
+\hfill$\blacksquare$
+
+\textbf{Teorema 2.} La transformada de Fourier es una aplicación continua y biyectiva del espacio de Schwartz en sí mismo. Para $u \in S(\mathbb{R}^d)$, tenemos la fórmula de inversión
+
+	$$(F^{-1}Fu)(x) = \check{\hat{u}}(x)= \frac{1}{(2\pi)^{d/2}} \int_{\mathbb{R}^d} \hat{u}(\xi) e^{ix\xi} d\xi = u(x)$$
+
+\textbf{Demostración.} Por el lema 2, tenemos que para todo $\xi \in \mathbb{R}^d$
+
+$$|\xi^\alpha \frac{\partial^\beta}{\partial \xi^\beta}\hat{u}(\xi)| = |F(\frac{\partial^\alpha}{\partial x^\alpha}p^\beta u)(\xi)| \leq \frac{1}{(2\pi)^{d/2}} \left\Vert \frac{\partial^\alpha}{\partial x^\alpha}p^\beta u \right \Vert_1  (*)$$
+
+Por tanto, para $u \in S(\mathbb{R}^d)$, tenemos que $\hat{u} \in S(\mathbb{R}^d)$. Dado que la transformada de Fourier es lineal, es suficiente demostrar la continuidad en el cero. En efecto, consideramos a sucesión nula ${u_n}$ en el espacio de Schwartz, es decir, cuando $n \mapsto \infty, C_{\alpha,\beta}(u_n) \mapsto 0$. Esto es, ${u_n}$, al igual que ${\partial^\alpha p^\beta u_n}, \forall \alpha, \beta$, converge uniformemente a cero. Esto implica que la parte derecha de $(*)$ tiende a cero. En particular, obtenemos que $C_{\alpha,\beta}(\hat(u_n)) \mapsto 0$, lo que implica que ${\hat{u_n}}$ es una sucesión nula, probando la continuidad. \\
+
+Para probar la fórmula de inversión, consideramos dos funciones arbitrarias $u, \phi \in S(\mathbb{R}^d)$
+
+$$(\hat{\hat{u}}*\phi)(x) = \int_{\mathbb{R}^d} \hat{\hat{u}}(y) \phi(x-y) dy = \int_{\mathbb{R}^d}\hat{u}(y) e^{ixy} \hat{\phi}(-y) dy$$
+$$ = \int_{\mathbb{R}^d} u(y) \hat{\hat{\phi}}(-x-y)dy = (u*\hat{\hat{\phi}})(-x)$$
+
+Ahora elegimos $\phi$ para que sea una función Gaussiana reescalada:
+
+$$\phi_{\epsilon}(x) = \epsilon^{-d}(D_{\epsilon^{-1}id}G)(x) = \epsilon^{-d}e^{-\frac{|x|^2}{2\epsilon^2}}$$
+
+De estos cálculos inferimos que $\hat{\phi}_\epsilon = D_{\epsilon\text{ } id}\hat{G}$ y por tanto $\hat{\hat{\phi}}_\epsilon = \epsilon^{-d} D_{\epsilon^{-1}\text{ } id}\hat{\hat{G}}$. Por el lema 3, $\hat{G} = G$ y $\hat{\hat{\phi_{\epsilon}}} = \phi_{\epsilon}$. Dado que $u$ es en particular acotada y continua, y G es positiva con integral normalizada a uno, podemos aplicar las propiedades de la convolución y obtener que cuando $\epsilon \mapsto 0$,
+
+$$\hat{\hat{u}}*\phi_{\epsilon}(x) \mapsto \hat{\hat{u}}(x)  \text{ y } u*\phi_{\epsilon}(-x) \mapsto u(-x) \Rightarrow \hat{\hat{u}}(x)=u(-x) $$
+
+Por propiedades de conjugación de la transformada de Fourier, tenemos que $\check{u} = D_{-id} \hat{u}$ y sustituyendo $\hat{u}$ por $u$, obtenemos:
+
+$$\check{\hat{u}} = D_{-id} \hat{\hat{u}} = u$$
+
+
+\hfill$\blacksquare$
+
+\textbf{Teorema 3.} Hay un único operador $F:L^2(\mathbb{R}^d) \mapsto L^2(\mathbb{R}^d)$ que extiende la transformada de Fourier $F$ a $S(\mathbb{R}^d)$ y satisface la ecuación $\left\Vert u \right \Vert_2 = \left\Vert Fu \right \Vert_2 \forall u \in L^2(\mathbb{R}^d)$. Además, $F$ es biyectivo y su inversa $F^{-1}$ es una extensión continua de $F^{-1}$ en $S(\mathbb{R}^d)$
+
+\textbf{Demostración.} Para $u,v \in S(\mathbb{R}^d)$, sabemos que 
+
+$$(\hat{u},\hat{v})_2 = (u,v)_2$$
+
+y en particular $\left \Vert u \right \Vert_2 = \left \Vert Fu \right \Vert_2$. Por tanto, la transformada de Fourier es una isometría definida en un subconjunto  denso de $L^2(\mathbb{R}^d)$. Existe una única extensión continua en todo el espacio. Debido a la simetría entre $F$ y $F^{-1}$, un argumento análogo demuestra el recíproco.
+
+\hfill$\blacksquare$
+
+La propiedad de isometría $\left \Vert u \right \Vert_2 = \left \Vert Fu \right \Vert_2$ también implica que
+
+$$(u,v)_2 = (Fu,Fv)_2$$
+que se conoce como la fórmula de Plancharel.
+\end{itemize}
 \newpage
 \section{Bibliografía}
 
