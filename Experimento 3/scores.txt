@@ -1,0 +1,2 @@
+Score para training: 0.6896551724137931
+Score para test: 0.6666666666666666
