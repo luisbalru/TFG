@@ -374,7 +374,7 @@ Para calcular la transformada de Fourier de $g$, tengamos en cuenta que $g$ sati
 
 \textbf{Teorema 2.} La transformada de Fourier es una aplicación continua y biyectiva del espacio de Schwartz en sí mismo. Para $u \in S(\mathbb{R}^d)$, tenemos la fórmula de inversión
 
-	$$(F^{-1}Fu)(x) = \check{\hat{u}}(x)= \frac{1}{(2\pi)^{d/2}} \int_{\mathbb{R}^d} \hat{u}(\xi) e^{ix\xi} d\xi = u(x)$$
+	$$(F^{-1}Fu)(x) = \overline{\hat{u}}(x)= \frac{1}{(2\pi)^{d/2}} \int_{\mathbb{R}^d} \hat{u}(\xi) e^{ix\xi} d\xi = u(x)$$
 
 \textbf{Demostración.} Por el lema 2, tenemos que para todo $\xi \in \mathbb{R}^d$
 
@@ -395,9 +395,9 @@ De estos cálculos inferimos que $\hat{\phi}_\epsilon = D_{\epsilon\text{ } id}\
 
 $$\hat{\hat{u}}*\phi_{\epsilon}(x) \mapsto \hat{\hat{u}}(x)  \text{ y } u*\phi_{\epsilon}(-x) \mapsto u(-x) \Rightarrow \hat{\hat{u}}(x)=u(-x) $$
 
-Por propiedades de conjugación de la transformada de Fourier, tenemos que $\check{u} = D_{-id} \hat{u}$ y sustituyendo $\hat{u}$ por $u$, obtenemos:
+Por propiedades de conjugación de la transformada de Fourier, tenemos que $\overline{u} = D_{-id} \hat{u}$ y sustituyendo $\hat{u}$ por $u$, obtenemos:
 
-$$\check{\hat{u}} = D_{-id} \hat{\hat{u}} = u$$
+$$\overline{\hat{u}} = D_{-id} \hat{\hat{u}} = u$$
 
 
 \hfill$\blacksquare$
@@ -415,7 +415,203 @@ y en particular $\left \Vert u \right \Vert_2 = \left \Vert Fu \right \Vert_2$. 
 La propiedad de isometría $\left \Vert u \right \Vert_2 = \left \Vert Fu \right \Vert_2$ también implica que
 
 $$(u,v)_2 = (Fu,Fv)_2$$
-que se conoce como la fórmula de Plancharel.
+que se conoce como la fórmula de Plancherel.
+
+\item \textbf{Transformada Wavelet}
+
+En la sección anterior tratamos los fundamentos teóricos que sostienen la transformada de Fourier como herramienta para estudiar la representación de la frecuencia de una señal o imagen. Sin embargo, la información relacionada con la localización no es codificada de una forma plausible. En particular, una alteración local de una señal o una imagen da lugar a una modificación global de toda la transformada de Fourier. En otras palabras, la transformada de Fourier es una transformación global en el sentido de que $\hat{u(\xi)}$ depende de todos los valores de $u$. En ciertas circunstancias, las transformaciones locales son deseables. Antes de introducir nuestra herramienta fundamental en la extracción de características, la transformada Wavelet, presento una nueva alternativa para estudiar información ``local'' en la frecuencia: la transformada de Fourier de tiempo reducido o transformada ``ventana'' de Fourier (\cite{stft}):
+
+\textbf{Definición 4.} Sean $u,g \in L^2(\mathbb{R}^d)$. La transformada de Fourier de tiempo reducido de $u$ con una función ventana $g$ se define como
+
+$$(G_g u)(\xi,t) = \frac{1}{(2\pi)^{d/2}}\int_{\mathbb{R}^d} u(x) \overline{g(x-t)} e^{-ix\xi}dx$$
+
+Esta transformada depende de un parámetro de frecuencia $\xi$ y de un parámetro espacial $t$ y existen muchas formas de representarla:
+
+$$(G_g u)(\xi,t) = F(uT_{-t} \overline{g})(\xi)$$
+$$ = \frac{1}{(2\pi)^{d/2}} (u, M_\xi T_{-t}g)_2$$
+$$ =  \frac{1}{(2\pi)^{d/2}} (M_{-\xi}u*D_{-id}\overline{g})(t)$$
+
+La primera alternativa explica el nombre de ``ventana'': a través de la multiplicación por la función $g$, $u$ es localizada previa la transformada de Fourier. Nótese que la transformada ``ventana'' de Fourier es una función de $2d$ variables: $(G_g u): \mathbb{R}^{2d} \mapsto \mathbb{C}$. \\
+
+\textbf{Lema 4.} Sean $u,v,g \in L^2(\mathbb{R}^{2d})$. Entonces  $(G_g u) \in L^2(\mathbb{R}^{2d})$ y 
+
+$$(G_g u, G_g v)_{L^2(\mathbb{R}^{2d})} = \Vert g \Vert_2^2(u,v)_2$$
+
+\textbf{Demostración.} Para probar la igualdad entre productos escalares, usamos la isometría de la transformada de Fourier y la fórmula de Plancherel. Con $F_t$ denotamos la transformada de Fourier respecto de $t$, utilizamos una de las alternativas de representación de la transformada ventana de Fourier y el teorema de convolución para obtener
+
+$$F_t(G_g u(\xi,·))(\omega) = F_t((2\pi)^{d/2}(M_{-\xi}u*D_{-id}\overline{g}))(\omega)$$
+$$= F(M_{-\xi}u)(\omega)(F D_{-id}\overline{g})(\omega)$$
+$$= \hat{u}(\omega+\xi)\overline{\hat{g}}(\omega)$$
+
+Obtenemos el resultado con el siguiente cálculo:
+
+$$(G_g u,G_g v)_{L^2(\mathbb{R}^{2d})} = (F_t(G_g u), F_t(G_g v))_{L^2(\mathbb{R}^{2d})}$$
+$$ = \int_{\mathbb{R}^d} \int_{\mathbb{R}^d} \hat{u}(\omega + \xi) \overline{\hat{g}}(\omega) \overline{\hat{v}}(\omega+\xi)\hat{g}(\omega) d\xi d\omega$$
+$$= \int_{\mathbb{R}^d} |\hat{g}(\omega)|^2 \int_{\mathbb{R}^d} \hat{u}(\omega+\xi) \overline{\hat{v}}(\omega+\xi) d\xi d\omega$$
+$$=\Vert \hat{g} \Vert_2^2(\hat{u},\hat{v})_2$$
+$$=\Vert \hat{g} \Vert_2^2(u,v)_2$$
+
+\hfill$\blacksquare$
+
+
+Vemos entonces que la transformada de Fourier de tiempo reducido es una isometría, por lo que podemos calcular la fórmula de inversión:
+
+\textbf{Corolario 1.} Para $u,g \in L^2(\mathbb{R}^d)$ con $\Vert g \Vert_2 = 1$, tenemos que la fórmula de inversión es
+
+$$u(x) = \frac{1}{(2\pi)^{d/2}} \int_{\mathbb{R}^d} \int_{\mathbb{R}^d} G_g u(\xi,t) g(x-t) e^{ix\xi} d\xi dt \text{    para casi todo x.}$$
+
+
+\textbf{Demostración.} Dado que $g$ está normalizada, $G_g$ es una isometría, por lo que sólo nos queda calcular el operador adjunto. Para $u \in L^2(\mathbb{R}^d)$ y $F \in L^2(\mathbb{R}^{2d})$, tenemos que
+
+$$ (u, G_g^*F)_{L^2(\mathbb{R}^d)} = (G_g u,F)_{L^2(\mathbb{R}^{2d})}$$
+$$ = \int_{\mathbb{R}^{2d}} G_g u(\xi,t) \overline{F(\xi,t)} d\xi dt$$
+$$ = \int_{\mathbb{R}^{2d}} \frac{1}{(2\pi)^{d/2}} \int_{\mathbb{R}^{2d}} u(x) \overline{g(x-t)} e^{-ix \xi}dx \overline{F(\xi,t)} d\xi dt$$
+$$ = \int_{\mathbb{R}^d} u(x) \overline{\frac{1}{(2\pi)^{d/2}} \int_{\mathbb{R}^{2d}} F(\xi,t) e^{ix\xi}g(x-t)d\xi dt} dx,$$
+
+lo que implica
+
+$$G_g^*F(x) = \frac{1}{(2\pi)^{d/2}} \int_{\mathbb{R}^{2d}} F(\xi,t) e^{ix\xi}g(x-t)d\xi dt$$
+
+\hfill$\blacksquare$
+
+La transformada ventana de Fourier no se aplica en procesamiento de imágenes generalmente. Hay varios motivos: en primer lugar, la transformación de una imagen produce una función de cuatro variables. Esto nos lleva a un gran consumo de memoria y perdemos gran parte de la capacidad de visualización. Por otra parte, la discretización de esta transformada no es para nada trivial y no hay un análogo directo para series de Fourier o transformada discreta. Para más información, véase (\cite{ftta}).
+
+\item Transformada Wavelet continua
+
+Nos centramos a partir de ahora en la herramienta principal en cuanto a la extracción de características se refiere. Mientras que la transformada de tiempo reducido de Fourier usa una ventana fija para localizar la función de interés, la transformada wavelet utiliza funciones variando sus anchuras (Figura 3.3). 
+
+ \begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.42]{widths.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Transformada ventana (izquierda) y transformada wavelet (derecha)} 
+	\label{fig:widths}
+\end{figure}
+
+En el caso de que nos encontremos en dimensión mayor que uno (nuestro caso), la transformada se puede definir de varias formas. Nos ocupamos primero de la transformada unidimensional:
+
+\textbf{Definición 5.} Sean $u, \psi \in L^2(\mathbb{R},\mathbb{R})$. Para $b \in \mathbb{R}, a>0$ la transformada wavelet de $u$ con $\psi$ se define como
+
+$$L_\psi u(a,b) = \int_{\mathbb{R}} u(x) \frac{1}{\sqrt{a}} \psi\left(\frac{x-b}{a}\right) dx$$
+
+La transformada wavelet depende del parámetro espacial $b$ y el parámetro de escala $a$. Como en casos anteriores, podemos representarla de múltiples formas:
+
+$$L_\psi (a,b) = \frac{1}{\sqrt{a}} (u, T_{-b}D_{1/a}\psi)_{L^2(\mathbb{R})}$$
+$$=\frac{1}{\sqrt{a}} (u*D_{-1/a}\psi)(b))$$
+
+Como la transformada de Fourier de tiempo reducido, la transformada wavelet posee cierta isometría, sin embargo, lo hace respecto de una medida ponderada. Introduzco el siguiente espacio:
+
+$$L^2 \left( [0,\infty[ \times \mathbb{R}, \frac{da db}{a^2}\right) = \{ F: [0,\infty[ \times \mathbb{R} \mapsto \mathbb{R}: \int_{\mathbb{R}} \int_{\mathbb{R}^+} |F(a,b)|^2 \frac{da db}{a^2} < \infty \} $$
+
+El producto escalar en este espacio es
+
+$$(F,G)_{L^2 \left( [0,\infty[ \times \mathbb{R}, \frac{da db}{a^2}\right)} = \int_{\mathbb{R}} \int_{\mathbb{R}^+} F(a,b) G(a,b) \frac{da db}{a^2}$$
+
+\textbf{Teorema 4.} Sea $u, \psi \in L^2(\mathbb{R})$ con 
+
+$$ 0 < c_\psi = 2\pi \int_{\mathbb{R}^+} \frac{|\hat{\xi}(\xi)|^2}{\xi} d\xi < \infty$$
+
+Entonces 
+
+$$L_\psi : L^2(\mathbb{R}) \mapsto L^2 \left( [0,\infty[ \times \mathbb{R}, \frac{da db}{a^2}\right)$$
+
+es una función lineal y se tiene que
+
+$$(L_\psi u, L_\psi v)_{L^2 \left( [0,\infty[ \times \mathbb{R}, \frac{da db}{a^2}\right)} = c_\psi(u,v)_{L^2\mathbb{R}}$$
+
+\textbf{Demostración.} Usamos el producto escalar de la transformada wavelet, las propiedades de la transformada de Fourier y la fórmula de Plancherel para obtener
+
+$$L_\psi u (a,b) = \frac{1}{\sqrt{a}}(u,T_{-b}D_{1/a}\psi)_{L^2(\mathbb{R})}$$
+$$ = \frac{1}{\sqrt{a}} (\hat{u}, F(T_{-b}D_{1/a}\psi))_{L^2(\mathbb{R})}$$
+$$ = \frac{1}{\sqrt{a}} (\hat{u},aM_{-b}D_a\hat{\psi})_{L^2(\mathbb{R})}$$
+$$=\sqrt{a} \int_{\mathbb{R}} \hat{u}(\psi)e^{ib\psi}\overline{\hat{\psi}(a\xi)} d\xi$$
+$$= \sqrt{a 2\pi} F^{-1} (\hat{u}\overline{D_a \hat{\psi}})(b)$$
+
+Ahora, calculamos lo siguiente:
+
+$$(L_\psi u, L_\psi v)_{ L^2 \left( [0,\infty[ \times \mathbb{R}, \frac{da db}{a^2}\right)} = \int_{\mathbb{R}}
+\int_{\mathbb{R}^+} L_\psi u(a,b) L_\psi v(a,b) \frac{da db}{a^2}$$
+$$= 2\pi \int_{\mathbb{R}^+} \int_{\mathbb{R}} a F^{-1}(\hat{u}\overline{D_a \hat{\psi}})(b)\overline{F^{-1}(\hat{v}\overline{D_a \hat{\psi}})(b)} db \frac{da}{a^2}$$
+$$ = 2\pi  \int_{\mathbb{R}^+} \int_{\mathbb{R}}
+a \hat{u}(\xi) \overline{\hat{\psi}(a\xi)}\overline{\hat{v}(\xi)\overline{\hat{\psi}(a\xi)}} d\xi \frac{da}{a^2}$$
+$$ = 2\pi \int_{\mathbb{R}} \hat{u}(\xi) \overline{\hat{v}(\xi)} \int_{\mathbb{R}^+} \frac{|\hat{\psi}(a\xi)|^2}{a} da d\xi$$
+
+Un cambio de variable y $|\hat{\psi}(-\xi)| = |\hat{\psi}(\xi)|$ lleva 
+
+$$\int_{\mathbb{R}^+} \frac{|\hat{\psi}(a\xi)|^2}{a} da = \int_{\mathbb{R}^+} \frac{|\hat{\psi}(a|\xi|)|^2}{a} da = \int_{\mathbb{R}^+} \frac{|\hat{\psi}(\omega)|^2}{\omega} d\omega = \frac{c_\psi}{2\pi}$$
+
+Aplicando la fórmula de Plancherel obtenemos lo que buscábamos.
+
+\hfill$\blacksquare$
+
+Que $c_\psi < \infty$ asegura que $L_\psi$ es una función continua y $c_\psi > 0$ garantiza la existencia de la inversa de $L_\psi$. \\
+
+\textbf{Definición 6} La condición
+
+$$0 < c_\psi = 2\pi \int_{\mathbb{R}^+} \frac{|\hat{\psi}(\xi)|^2}{\xi} d\xi < \infty$$
+
+se llama la condición de admisibilidad y la función $\psi$ que la satisface se le llama \textit{wavelets}.
+
+La condición de admisibilidad dice que, alrededor de cero, la transformada de Fourier de una wavelet tiende suficientemente rápido a cero, $\hat{\psi}(0) = 0$.
+
+\textbf{Corolario 2} Sea $u, \psi \in L^2(\mathbb{R})$ y $c_\psi = 1$. Entonces
+
+$$u(x) = \int_{\mathbb{R}} \int_{\mathbb{R}^+} L_\psi u(a,b) \frac{1}{\sqrt{a}} \psi\left(\frac{x-b}{a}\right) \frac{da db}{a^2}$$
+
+\textbf{Desmotración.} Calculamos el adjunto de la transformada Wavelet. Para $u \in L^2(\mathbb{R})$, y $F \in L^2 \left( [0,\infty[ \times \mathbb{R}, \frac{da db}{a^2}\right)$,
+
+$$(L_\psi u, F)_{L^2 \left( [0,\infty[ \times \mathbb{R}, \frac{da db}{a^2}\right)} = \int_{\mathbb{R}} \int_{\mathbb{R}^+} \int_{\mathbb{R}} u(x) \frac{1}{\sqrt{a}} \psi\left(\frac{x-b}{a}\right)dx F(a,b) \frac{da db}{a^2}$$
+$$ = \int_{\mathbb{R}} u(x) \int_{\mathbb{R}} \int_{\mathbb{R}^+} F(a,b) \frac{1}{\sqrt{a}} \psi\left(\frac{x-b}{a}\right) \frac{da db}{a^2}dx $$
+
+Esto implica que
+
+$$L_\psi^* F(x) = \int_{\mathbb{R}} \int_{\mathbb{R}^+} F(a,b) \frac{1}{\sqrt{a}} \psi\left(\frac{x-b}{a}\right) \frac{da db}{a^2}$$
+
+como queríamos demostrar.
+
+\hfill$\blacksquare$
+
+Presento ahora la wavelet más sencilla:
+
+\textbf{Haar wavelet:} 
+
+$$\psi(x) = \begin{cases}
+	1 \  \ \ si \ 0 \leq x < 0.5 \\
+	-1 \ \  si \ 0.5 \leq x < 1 \\
+	0 \ \ en \ otro \ caso
+\end{cases}$$
+
+Es discontinua pero de soporte compacto:
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.42]{haar.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Wavelet Haar} 
+	\label{fig:haar}
+\end{figure}
+
+\item Transformada discreta Wavelet
+
+La transformada continua Wavelet es una representación redundante. La pregunta que surge es si sería suficiente con conocer la transformada wavelet de una función en un subconjunto de $[0,\infty[ \times \mathbb{R}$. Este es el caso para algunos subconjuntos discretos. Veamos que bajo ciertas condiciones, las funciones
+
+$$\{\psi_{j,k}(x) = 2^{-j/2}\psi(2^{-j}x-k) | j,k \in \mathbb{Z}\}$$
+
+forman una base ortonormal de $L^2(\mathbb{R})$. Para demostrarlo, primero necesitamos introducir ciertos conceptos. El primo de ellos es la noción de serie wavelet y transformada discreta wavelet, a saber, lo conocido como ``análisis multiescala''. \\
+
+\textbf{Definición 7.} Una sucesión $(V_j)_{j \in \mathbb{Z}}$ de subconjuntos cerrados de $L^2(\mathbb{R})$ es llamado un análisis multiescala si satisface las siguientes condiciones:
+
+\begin{itemize}
+	\item Invarianza por traslaciones: $$\forall j,k \in \mathbb{Z}, u_j \in V_j \Leftrightarrow T_{2^jk}u \in V_j$$
+	\item Inclusión: $$\forall j \in \mathbb{Z}, V_{j+1} \subset V_{j}$$
+	\item Escala: $$\forall j \in \mathbb{Z}, u \in V_{j} \Leftrightarrow D_{1/2}u \in V_{j+1}$$
+	\item Intersección trivial: $$\cap_{j \in \mathbb{Z}} V_j = \{0\}$$
+	\item Completitud: $$\overline{\cup_{j \in \mathbb{Z}} V_j} = L^2(\mathbb{R})$$
+	\item Base ortonormal: Existe una función $\phi \in V_0$ tal que las funciones $\{T_k \phi | k \in \mathbb{Z} \}$ forman una base ortonormal de $V_0$
+	La función $\phi$ es llamada un generador o una función de escala del análisis multiescala.
+\end{itemize}
+
+Hagamos algunas puntualizaciones sobre esta definición. Los espacios $V_j$ son invariantes por traslación respecto de las traslaciones diádicas $2^j$. Además, están encajadas entre sí y se hacen más pequeñas conforme crece $j$. Si notamos $P_{V_j}$ como la proyección ortogonal sobre $V_j$, entonces para todo $u$ 
+
+$$\lim_{j \mapsto \infty} P_{V_j} u = 0, \lim_{j \mapsto -\infty} P_{V_j} u = 0$$
 \end{itemize}
 \newpage
 \section{Bibliografía}
