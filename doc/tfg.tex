@@ -258,7 +258,7 @@ f_{n1}&f_{n2}&\dots&f_{nm}
 
 Cuando se trabaja con MRI, se tiene un número de imágenes de $157\times189\times136$ en los planos X,Y y Z respectivamente, por lo que tenemos 157*189*136 = 4.035.528 \textit{voxels} con 255 valores posibles. De esta manera encontraríamos más de mil millones de características. Necesitamos, por tanto, reducir el espacio de posibilidades, es decir, disminuir la cantidad de recursos necesaria para describir nuestro conjunto de datos. \\
 
-En general, una buena estrategia para extraer características de una imagen es convertirla a un dominio diferente. Con ese objetivo, introducimos ahora dos opciones distintas: la transformada de Fourier y la transformada Wavelets (que finalmente utilizaremos). Todo el material aquí recogido proviene de multitud de textos. Son los siguientes: \cite{math-image}
+En general, una buena estrategia para extraer características de una imagen es convertirla a un dominio diferente. Con ese objetivo, introducimos ahora dos opciones distintas: la transformada de Fourier y la transformada Wavelets (que finalmente utilizaremos). Todo el material aquí recogido proviene de multitud de textos. Son los siguientes: \cite{math-image}, \cite{canada}, \cite{daube}, \cite{castro}, \cite{misiti}.
 
 \begin{itemize}
 	\item \textbf{La Transformada de Fourier en $L^1(\mathbb{R}^d)$}
@@ -612,7 +612,247 @@ forman una base ortonormal de $L^2(\mathbb{R})$. Para demostrarlo, primero neces
 Hagamos algunas puntualizaciones sobre esta definición. Los espacios $V_j$ son invariantes por traslación respecto de las traslaciones diádicas $2^j$. Además, están encajadas entre sí y se hacen más pequeñas conforme crece $j$. Si notamos $P_{V_j}$ como la proyección ortogonal sobre $V_j$, entonces para todo $u$ 
 
 $$\lim_{j \mapsto \infty} P_{V_j} u = 0, \lim_{j \mapsto -\infty} P_{V_j} u = 0$$
+
+\textbf{Definición 8.} Sea $(V_j)_{j \in \mathbb{Z}}$ un análisis multiescala. Sean $W_j$ los espacios definidos como los complementos ortogonales de $V_j, V_{j-1}$
+
+$$V_{j-1} = V_j \oplus W_j, V_j \perp W_j$$
+
+El espacio $V_j$ es llamado el espacio aproximación a la escala $j$; el espacio $W_j$ es llamado el espacio wavalet a la escala $j$.
+
+La definición de $W_j$ directamente implica
+
+$$V_j = \oplus_{m \in \mathbb{Z}} W_m$$
+
+y debido a la completitud de $V_j$,
+
+$$L^2(\mathbb{R}) =   \oplus_{m \in \mathbb{Z}} W_m$$
+
+Además, tenemos que $P_{V_{j-1}} = P_{V_j} + P_{W_j}$ y por tanto
+
+$$ P_{W_j} = P_{V_{j-1}} - P_{V_j}$$
+
+Podemos ahora representar cada $u \in L^2(\mathbb{R})$ a través de los espacios $V_j, W_j$ 
+
+$$ u = \sum_{j \in \mathbb{Z}}P_{W_j}u = P_{V_m}u + \sum_{j \leq m}P_{W_j}u$$
+
+Estas ecuaciones justifican el nombre de análisis multiescala: los espacios $V_j$ permiten una aproximación sistemática de funciones a diferentes escalas.
+
+\textbf{Teorema 5.} Sea $(V_j)$ un análisis multiescala con generador $\phi$ tal que $\phi$ satisface 
+
+$$\phi(x) = \sum_{j \in \mathbb{Z}} h_k \sqrt{2} \phi(2x-k)$$ 
+con una sucesión $(h_k)$. Más aún, sea $\psi \in V_{-1}$ definido como
+
+$$\psi(x) = \sqrt{2} \sum_{k \in \mathbb{Z}} (-1)^k h_{1-k}\phi(2x-k)$$
+
+Entonces:
+
+\begin{enumerate}
+	\item El conjunto $\{\psi_{j,k}: k\in \mathbb{Z} \}$ es una base ortonormal de $W_j$.
+	\item El conjunto $\{\psi_{j,k}: k\in \mathbb{Z} \}$ es una base ortonormal de $L^2(\mathbb{R})$.
+	\item La función $\psi$ es una wavelet con $c_\psi = 2 \log 2$.
+\end{enumerate}
+
+\textbf{Demostración.} Primero vemos que para todo $k \in \mathbb{Z}$, tenemos que
+
+$$(\psi, \phi_{k,0}) = 0,$$
+$$(\psi, \psi_{k,0}) = \delta_{0,k}$$
+
+La primera ecuación implica que $\psi \perp V_0$, y por tanto tenemos que $\psi \in W_0$. La segunda ecuación implica la ortonormalidad de las traslaciones de $\psi$. \\
+
+Ahora demostramos que el sistema $\{\psi_{k,0} | k \in \mathbb{Z} \}$ es completo en $W_0$. Dado que $V_{-1} = V_0 \oplus W_0$, es equivalente demostrar que el sistema $\{\phi_{k,0} | k \in \mathbb{Z} \}$ es completo en $V_{-1}$. Esto último lo obtenemos viendo que $\phi_{-1,0}$ se puede representar como $\{\phi_{k,0}, \psi_{k,0} | k \in \mathbb{Z} \}$. Para ello, calculamos lo siguiente:
+
+$$\sum_{k \in \mathbb{Z}} | (\phi_{-1,0}, \psi_{k,0})|^2 +  | (\phi_{-1,0}, \phi_{k,0})|^2$$
+$$= \sum_{k \in \mathbb{Z}}| \sum_{l \in \mathbb{Z}} h_l (\phi_{-1,0},\phi_{-1,l+2k}) |^2 + | \sum_{l \in \mathbb{Z}}(-1)^l h_{1-l} (\phi_{-1,0},\phi_{-1,l+2k}) |^2$$
+$$= \sum_{k \in \mathbb{Z}} h_{-2k}^2 + h_{1+2k}^2 = \sum_{k \in \mathbb{Z}}h_k^2$$
+
+Se puede ver que $\sum_{k \in \mathbb{Z}} h_k^2 = 1$, y debido que $\Vert \phi_{-1,0} \Vert = 1$, se sigue que el sistema $\{\phi_{k,0}, \psi_{k,0} | k \in \mathbb{Z} \}$ es completo en $V_{-1}$.
+
+Para el tercer punto, hago referencia a \cite{meyer}
+
+
+\hfill$\blacksquare$
+
+Por último, desarrollo la transformada wavelet discreta bidimensional, la herramienta definitiva para nuestro estudio 2D de las MRI cerebrales:
+
+\item La Transformada Wavelet Discreta Bidimensional
+
+Basándonos en una base wavelet ortonormal $\{\psi_{j,k} | j,k \in \mathbb{Z} \}$ de $L^2)(\mathbb{R})$, podemos construir una base ortonormal de $L^2(\mathbb{R}^2)$ a través de todos los productos tensoriales. Las funciones
+
+$$(x_1,x_2) \mapsto \psi_{j_1,k_1}(x_1), \psi_{j_2,k_2}(x_2), \ \ \  j_i,k_i \in \mathbb{Z}$$
+
+forman una base ortonormal de $L^2(\mathbb{R}^2)$.
+
+En el mismo sentido, podemos constituir un análisis multiescala de $L^2(\mathbb{R}^2)$: para un análisis multiescala $(V_j)$ de $L^2(\mathbb{R}^2)$, creamos los espacios
+
+$$V_j^2 = V_j \otimes V_j \subset L^2(\mathbb{R}^2)$$
+
+que están definidos dado que las funciones
+
+$$\Phi_{j,k}: (x_1,x_2) \mapsto \phi_{j,k_1}(x_1) \phi_{j,k_2}(x_2), \vspace{0.5cm} k= (k_1,k_2) \in \mathbb{Z}^2$$
+
+forman una base ortonormal de $V_j^2$. Esta construcción también es llamada un producto tensorial para espacios de Hilbert separables (\cite{weid}). \\
+
+En el caso bidimensional, los espacios wavelet, es decir, los complementos ortogonales de $V_j^2$ en $V_{j-1}^2$ tienen una estructura más compleja. Definimos el espacio wavelet $W_j^2$ 
+
+$$V_{j-1}^2 = V_j^2 \oplus W_j^2$$
+
+donde el superíndice 2 significa en un caso un producto tensorial y en el otro representa un nombre. Por otra parte, $V_{j-1} = V_j \oplus W_j$, de lo que obtenemos
+
+$$V_{j-1}^2 = (V_j \oplus W_j) \otimes (V_j \oplus W_j)$$
+$$ = (V_j \otimes V_j) \oplus (V_j \otimes W_j) \oplus (W_j \otimes V_j) \oplus (W_j \otimes W_j)$$
+
+y llamando
+
+$$H_j^2 = V_j \otimes W_j, \hspace{0.2cm} S_j^2 = W_j \otimes V_j, \hspace{0.2cm} D_j^2 = W_j \otimes W_j$$
+
+podemos expresar
+
+$$V_{j-1}^2 = V_j^2 \oplus H_j^2 \oplus S_j^2 \oplus D_j^2$$
+
+Denotando la functión de escala de $(V_j)$ como $\phi$ y la correspondiente wavelet como $\psi$, definimos tres funciones:
+
+$$\psi^1(x_1,x_2) = \phi(x_1) \psi(x_2), \hspace{0.2cm} \psi^2(x_1,x_2) = \psi(x_1) \phi(x_2), \hspace{0.2cm} \psi^3(x_1,x_2) = \psi(x_1) \psi(x_2)$$
+
+Para $m \in {1,2,3}, j \in \mathbb{Z}, k \in \mathbb{Z}^2$, establecemos,
+
+$$\psi_{j,k}^2(x_1,x_2) = 2^{-j} \psi^m(2^{-j}x_1-k_1,2^{-j}x_2-k_2)$$
+
+Se puede probar que las funciones $\{\psi_{j,k}^1 | k \in \mathbb{Z}^2 \}$ forma una base ortonormal de $H_j^2$, las funciones $\{\psi_{j,k}^2 | k \in \mathbb{Z}^2 \}$ constituyen una base de $S_j^2$ y las funciones $\{\psi_{j,k}^3 | k \in \mathbb{Z}^2 \}$, de $D_j^2$. Por tanto
+
+$$\{\psi_{j,k}^m | m = 1,2,3, k\in \mathbb{Z}^2, j \in \mathbb{Z}\}$$
+
+constituye de forma natural una base ortonormal de $L^2(\mathbb{R}^2)$.
+
+Observamos que los espacios wavelet $W_j^2$ están generados por tres wavelets: $\psi^1, \psi^2$ y $\psi^3$ juntas con sus escalas y traslaciones. Los espacios $H_j^2$ contienen los detalles horizontales en la escala $j$ (en la dirección $x_1$) , los espacios $S_j^2$ los detalles verticales (dirección $x_2$) y los espacios $D_j^2$ los detalles en diagonal:
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.5]{wav.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{La transformada wavelet discreta 2D de una imagen a través de la wavelet Haar} 
+	\label{fig:wav}
+\end{figure}
+
+Este tipo de análisis multiescala bidimensional es fácil de implementar algorítmicamente: basado en la aproximación de los coeficientes $c^j$, calculamos los coeficientes $c^{j+1}$ es una escala mayor además de los tres coeficientes de detalles $d^{1,j+1}, d^{2,j+1}, d^{3,j+1}$. En la práctica, esto se consigue con la concatenación de la descomposición wavelet unidimensional a lo largo de las columnas y las filas:
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.5]{esquema.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Esquema de actuación algorítmica para calcular transformada 2D} 
+	\label{fig:esquema}
+\end{figure}
 \end{itemize}
+
+\newpage
+
+\subsubsection{Selección de características}
+
+Una vez que hemos aplicado la transformada discreta wavelet 2D sobre cada una de los slices y hemos configurado nuestro dataset, nos encontramos con un conjunto de datos de enormes dimensiones, repleto de información (gran parte, probablemente, redundante o inútil en nuestro proyecto) que necesita ser estudiada. Esta basta cantidad de datos tiene dos grandes inconvenientes. El primero de ellos es que los algoritmos de aprendizaje no serán capaces de encontrar las características determinantes a la hora de clasificar instancias debido al gran ruido que tenemos (efecto Hughes). Por su parte, el segundo es un problema pragmático: los clasificadores no van a tener un rendimiento adecuado y tardarán demasiado tiempo en ejecutarse. Por tanto, es necesaria una selección de las características más importantes para así garantizar un mejor rendimiento y unas conclusiones más certeras. Existen multitud de técnicas en estadística multivariante para reducir la dimensionalidad. De entre ellas destaca Análisis de Componentes Principales (PCA) y por ello la utilizamos. PCA es una herramienta eficiente para reducir la dimensionalidad de un dataset formado un gran número de variables correladas entre sí. El objetivo es transformar el conjunto de datos en uno nuevo constituido por las variables ordenadas según el grado de importancia o varianza de las mismas. Esta técnica tiene tres efectos:
+
+\begin{itemize}
+	\item Ortogonaliza las componentes de los vectores de entrada para que no tengan correlación entre ellas.
+	\item Ordena el resultado de las componentes ortogonales de mayor a menor en variación o importancia.
+	\item Elimina aquellas componentes que aportan menor variación.
+\end{itemize}
+
+Téngase en cuenta que los vectores de entrada deben estar normalizados con media cero y desviación típica uno antes de utilizar el algoritmo. La normalización se realiza tal y como se explicó en la sección anterior. \\
+
+PCA encuentra una función a través de la cual incluye grandes cantidades de información en muestras analizadas. Sin embargo, como las funciones son combinaciones lineales de las características originales, es difícil (por no decir imposible) interpretar las variables resultantes de la transformación. Desde el punto de vista clínico, este hecho hace que el estudio pierda valor médico, aunque es realmente necesario debido al volumen de datos que tenemos. De manera intuitiva, dado un espacio de características n-dimensional, PCA ajusta un elipsoide de la misma dimensión que contiene un porcentaje prefijado de la varianza de los datos y cada eje se convierte en una componente principal, por lo que si un eje es pequeño, su varianza también lo será. \\
+
+Desarrollo ahora el contenido matemático de Análisis de Componentes Principales (\cite{amsa}, \cite{ms}).
+\newpage
+	
+	Un vector aleatorio es un vector cuyas componentes son variables aleatorias. Por tanto, la media del vector es un vector formado por las medias de cada componente. Si $X = (X_1,\dots,X_n)$ es un vector aleatorio y $\mu = (\mu_1,\dots,\mu_n)$ es su vector media, entonces
+	
+	$$\mu_i = E(X_i) \hspace{0.5cm} i =1, \dots, n$$
+	
+	Sin embargo, la analogía para la varianza no es tan obvia. Definimos $var(X)$ como una matriz donde, para cada $i,j$, el elemento es $cov(X_i,X_j)$. Esto es lo que se llama la matriz de covarianzas de $X$. Esta matriz es siempre simétrica. \\
+	
+	Si $X$ e $Y$ son variables aleatorias e $Y$ es una función lineal de $X$, esto es, $Y = aX + b$ para alguna constante $a$ y $b$, entonces
+	
+	$$E(Y) = a E(X) + b$$
+	$$var(Y) = a^2 var(X)$$
+	$$\sigma(Y) =  |a| \sigma(X)$$
+	
+	Si $X,Y$ son vectores aleatorios, entonces decimos que $Y$ es una función lineal (afín) de $X$ cuando $Y = AX +b$, para alguna matriz constante $A$ y algún vector constante $b$. Tenemos que
+	
+	$$E(Y) = A E(X) + b $$
+	$$var(Y) = A var(X) A^T$$
+	
+	
+	Consideremos el caso en que $Y = AX$, siendo $A$ una matriz fila. Por tanto, $AX$ es un escalar. Por convención, $A = a^T$, siendo $a$ un vector columna. De la igualdad anterior tenemos que
+	
+	$$ 0 \leq var(Y) = a^T var(X) a$$
+	
+	teniendo en cuenta que la varianza de una variable aleatoria siempre es no negativa. Esta propiedad tiene un nombre. Un matriz simétrica $V$ se dice que es semi-definida positiva si 
+	$$a^T V a \geq 0 \hspace{1cm} \forall a$$
+	
+	Por tanto, la matriz de covarianzas es simétrica y semi-definida positiva. \\
+	
+	Tratamos ahora la descomposición espectral. Toda matriz simétrica tiene una descomposición espectral
+	
+	$$A = ODO^T$$
+	donde $D$ es diagonal y $O$ una matriz ortogonal. Pensando en $O$ como un cambio de sistema de coordenadas, encontramos una correspondencia con los movimientos rígidos (rotaciones) con ejes coordenados perpendiculares. La descomposición espectral puede utilizarse para determinar si una matriz es semi-definida positiva. 
+	
+	\textbf{Proposición.} Una matriz diagonal es semi-definida positiva si y solamente si todos sus elementos son no negativos.
+	
+	\textbf{Demostración} Basta ver que 
+	$$a^T D a = \sum_{i} a_i^2 d_ii.$$
+	\hfill$\blacksquare$
+	
+	En general, una matriz simétrica es semi-definida positiva si y solamente si la matriz diagonal de su descomposición espectral es semi-definida positiva, ya que
+	
+	$$a^T A a = a^T ODO a = b^t D b$$
+	
+	donde $b= O^Ta$ y $a = Ob$. \\
+	
+	Tratamos ahora los valores y vectores propios. Multiplicando a la derecha por $O$, tenemos que
+	
+	$$AO = ODO^TO = OD$$
+	
+	Si observamos este resultado por columnas $w_i \in O$, tenemos que
+	$$ A w_i = \lambda_i w_i$$
+	
+	donde $\lambda_i$ es el i-ésimo elemento de $D$.
+	
+	Por tanto, los elementos de $D$ son los valores propios de $A$ y las columnas de $O$, sus correspondientes vectores propios. \\
+	
+	Una vez introducidos estos sencillos conceptos, nos adentramos en Componentes Principales. Si $X$ es un vector aleatorio de varianza finita, sea 
+	$$var(X) = ODO^T$$
+	la descomposición espectral de su matriz de covarianzas.
+	
+	Considero el vector aleatorio $Y = O^T X$. Entonces
+	
+	$$var(Y) = O^T var(X) O = O^T ODO^T O = D$$
+	
+	ya que $O$ es ortogonal. Por tanto, $Y$ tiene una matriz de covarianzas diagonal. Por tanto, como los elementos que están fuera de la diagonal de la matriz de covarianzas son las propias covarianzas de las variables, las componentes de $Y$ no están correladas. Y ya que los elementos de la diagonal de la matriz de covarianzas son la varianza de cada variable y los elementos de $D$ son los valores propios de $var(X)$, las varianzas de los componentes de $Y$ son los valores propios de la matriz de covarianzas de $X$. \\
+	
+	Los elementos de $Y$ son las llamadas componentes principales de $X$. Dado que una matriz ortogonal es invertible, tenemos que $X = OY$. Esto expresa una variable aleatoria cualquiera como una combinación lineal de variables aleatorias independientes. Este proceso de  hacer la descomposición espectral de la matriz de covarianzas de X es el llamado Análisis de Componentes Principales.
+	
+	PCA se usa como método de reduccion de dimensionalidad. Si tomamos unos pocos componentes principales, obtenemos una explicación simple de la estructura de $X$ a través de unas pocas variables.Deben ordenarse las componentes de $Y$ poniendo en primer lugar las componentes más grandes (los mayores valores propios). Por último, tratamos la varianza explicada. Sea $\Vert · \Vert$ la norma Euclidea de un vector, por lo que
+	
+	$$ \Vert Y \Vert^2 = Y^T Y = \sum_{i} Y_i^2$$
+	
+	Como las componentes de $Y$ son independientes, tenemos que 
+	
+	$$E(\Vert Y - v \Vert^2) = \sum_{i=1}^{n} \lambda_i$$
+	
+	donde $v = E(Y)$. Dado que una transformación ortogonal es una rotación (isometría), no afecta a distancias ni longitudes. Si $\mu = E(X)$, tenemos
+	
+	$$E(\Vert X -\mu \Vert^2) = E((X-\mu)^T (X-\mu)$$
+	$$ = E((Y-v)^T O^T (Y-v)$$
+	$$ = E((Y-v)^T (Y-v)) $$
+	$$E(\Vert Y-v \Vert^2)$$
+	
+	Dado que $Y = O^TX$, $X = OY$ y $\mu = O v$. De forma similar, si $\overline{\mu} = E(\overline{X})$, entonces
+	
+	$$E(\Vert \overline{X}- \overline{\mu} \Vert^2) = \sum_{i=1}^{k} \lambda_i$$
+	
+	La fracción de varianza de $X$ explicada por las primeras $k$ componentes principales es
+	$$\frac{\sum_{i=1}^{k} \lambda_i}{\sum_{i=1}^{n} \lambda_i}$$
+	
+
+En nuestro proyecto, utilizamos siempre PCA con una varianza explicada del 95\%.
+
 \newpage
 \section{Bibliografía}
 
