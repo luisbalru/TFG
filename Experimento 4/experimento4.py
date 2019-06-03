@@ -133,6 +133,7 @@ for i in range(Y_shape):
     for j in range(len(pacientes_training)):
         slice = pacientes_training[j].get_slice(1,i)
         label = pacientes_training[j].get_label()
+        print(slice.shape)
         row = pacientes_training[j].get_wave2D(slice,'bior3.3',2)
         dataset.append(row)
         target.append(label)
@@ -190,3 +191,4 @@ with open(name_prob,'w') as f:
         for line in mat:
             f.write(str(line))
             f.write("\n")
+"""
