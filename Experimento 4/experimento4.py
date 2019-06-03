@@ -7,69 +7,39 @@ from subjects import Sujeto
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.decomposition import PCA
 from sklearn.model_selection import train_test_split
-from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score
-from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegressionCV
-from keras.layers import Dense, Dropout, Input
-from keras.layers import Conv2D, MaxPooling2D, Flatten
-from keras.models import Model
+from keras.models import Sequential
+from keras.layers import Dense, Conv2D, Flatten
+from keras.utils import to_categorical
 
-
-def deep_learning(x_train,y_train,x_test,y_test):
-    # network parameters
-    num_labels = 2
-    print(x_train.shape)
-    print(len(y_train))
-    print(image_size)
-    input_shape = (image_size, image_size, 1)
-    batch_size = 128
-    kernel_size = 3
-    filters = 64
-    dropout = 0.3
-
-    # use functional API to build cnn layers
-    inputs = Input(shape=input_shape)
-    y = Conv2D(filters=filters,
-               kernel_size=kernel_size,
-               activation='relu')(inputs)
-    y = MaxPooling2D()(y)
-    y = Conv2D(filters=filters,
-               kernel_size=kernel_size,
-               activation='relu')(y)
-    y = MaxPooling2D()(y)
-    y = Conv2D(filters=filters,
-               kernel_size=kernel_size,
-               activation='relu')(y)
-    # image to vector before connecting to dense layer
-    y = Flatten()(y)
-    # dropout regularization
-    y = Dropout(dropout)(y)
-    outputs = Dense(num_labels, activation='softmax')(y)
-
-    # build the model by supplying inputs/outputs
-    model = Model(inputs=inputs, outputs=outputs)
-    # network model in text
-    model.summary()
-
-    # classifier loss, Adam optimizer, classifier accuracy
-    model.compile(loss='categorical_crossentropy',
-                  optimizer='adam',
-                  metrics=['accuracy'])
-
-    # train the model with input images and labels
-    model.fit(x_train,
-              y_train,
-              validation_data=(x_test, y_test),
-              epochs=20)
-    return model.predict(x_test)
 
 
 pacientes = []
 imagenes_pd = os.listdir('./Datos/PD')
 # Set the parameters by cross-validation
+
+def deep_learning(X_train,y_train,x_test,y_test):
+    model = Sequential()
+
+    #add model layers
+    model.add(Conv2D(64, kernel_size=3, activation='relu', input_shape=(157,136,1)))
+    model.add(Conv2D(32, kernel_size=3, activation='relu'))
+    model.add(Flatten())
+    model.add(Dense(10, activation='softmax'))
+    #compile model using accuracy as a measure of model performance
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    #train model
+    model.fit(X_train, y_train,validation_data=(X_test, y_test), epochs=3)
+    pred = model.predict(X_test)
+    pred_fin = []
+    for i in range(len(pred)):
+        index = pred[i].argmax()
+        pred_fin.append(index)
+    return pred_fin
+
+
 
 clasificadores = []
 
@@ -133,36 +103,27 @@ for i in range(Y_shape):
     for j in range(len(pacientes_training)):
         slice = pacientes_training[j].get_slice(1,i)
         label = pacientes_training[j].get_label()
-        print(slice.shape)
-        """
-        row = pacientes_training[j].get_wave2D(slice,'bior3.3',2)
-        dataset.append(row)
+        dataset.append(slice)
         target.append(label)
-        """
+
 
     for k in range(len(pacientes_test)):
         slice = pacientes_test[k].get_slice(1,i)
         label = pacientes_test[k].get_label()
-        print(slice.shape)
-        """
-        row =  pacientes_test[k].get_wave2D(slice,'bior3.3',2)
-        dataset_t.append(row)
+        dataset_t.append(slice)
+
     dataset_t = np.array(dataset_t)
 
-    scaler = StandardScaler()
-    dataset = scaler.fit_transform(dataset)
-    dataset_t = scaler.fit_transform(dataset_t)
+
     X_train = dataset
     y_train = target
-    pca = PCA(n_components = 0.95, svd_solver = 'full')
-    pca.fit(X_train)
-    X_train = pca.transform(X_train)
-    pca2 = PCA(n_components = 0.95, svd_solver = 'full')
-    pca2.fit(dataset_t)
-    dataset_t = pca.transform(dataset_t)
+    X_train = X_train.reshape(169,157,136,1)
+    dataset_t = dataset_t.reshape(73,157,136,1)
+    y_train = to_categorical(y_train)
     for i in range(len(pacientes_test)):
         target_final.append(pacientes_test[i].get_label())
     target_final = np.array(target_final)
+    target_final = to_categorical(target_final)
     pred = deep_learning(X_train,y_train,dataset_t,target_final)
     dataset_final.append(pred)
 
@@ -195,4 +156,3 @@ with open(name_prob,'w') as f:
         for line in mat:
             f.write(str(line))
             f.write("\n")
-"""
