@@ -20,14 +20,14 @@ pacientes = []
 imagenes_pd = os.listdir('./Datos/PD')
 # Set the parameters by cross-validation
 
-def deep_learning(X_train,y_train,x_test,y_test):
+def deep_learning(X_train,y_train,X_test,y_test):
     model = Sequential()
 
     #add model layers
     model.add(Conv2D(64, kernel_size=3, activation='relu', input_shape=(157,136,1)))
     model.add(Conv2D(32, kernel_size=3, activation='relu'))
     model.add(Flatten())
-    model.add(Dense(10, activation='softmax'))
+    model.add(Dense(2, activation='softmax'))
     #compile model using accuracy as a measure of model performance
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     #train model
@@ -117,9 +117,12 @@ for i in range(Y_shape):
 
     X_train = dataset
     y_train = target
+    X_train = np.array(X_train)
+    y_train = np.array(y_train)
     X_train = X_train.reshape(169,157,136,1)
     dataset_t = dataset_t.reshape(73,157,136,1)
     y_train = to_categorical(y_train)
+    target_final = []
     for i in range(len(pacientes_test)):
         target_final.append(pacientes_test[i].get_label())
     target_final = np.array(target_final)
