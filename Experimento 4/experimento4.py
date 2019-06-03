@@ -134,13 +134,17 @@ for i in range(Y_shape):
         slice = pacientes_training[j].get_slice(1,i)
         label = pacientes_training[j].get_label()
         print(slice.shape)
+        """
         row = pacientes_training[j].get_wave2D(slice,'bior3.3',2)
         dataset.append(row)
         target.append(label)
+        """
 
     for k in range(len(pacientes_test)):
         slice = pacientes_test[k].get_slice(1,i)
         label = pacientes_test[k].get_label()
+        print(slice.shape)
+        """
         row =  pacientes_test[k].get_wave2D(slice,'bior3.3',2)
         dataset_t.append(row)
     dataset_t = np.array(dataset_t)
