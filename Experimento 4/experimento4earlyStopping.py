@@ -17,7 +17,7 @@ from keras.callbacks import EarlyStopping
 
 
 pacientes = []
-imagenes_pd = os.listdir('./Datos/PD2')
+imagenes_pd = os.listdir('./Datos/PD')
 # Set the parameters by cross-validation
 
 def deep_learning(X_train,y_train,X_test,y_test):
@@ -59,16 +59,16 @@ print("LECTURA DE IMAGENES")
 print("Leyendo pacientes enfermos")
 
 for i in range(len(imagenes_pd)):
-    imagenes_pd[i] = './Datos/PD2/' + imagenes_pd[i]
+    imagenes_pd[i] = './Datos/PD/' + imagenes_pd[i]
     paciente = Sujeto(imagenes_pd[i],0)
     pacientes.append(paciente)
 
-imagenes_control = os.listdir('./Datos/Control2')
+imagenes_control = os.listdir('./Datos/Control')
 
 print("Leyendo pacientes control")
 
 for i in range(len(imagenes_control)):
-    imagenes_control[i] = './Datos/Control2/' + imagenes_control[i]
+    imagenes_control[i] = './Datos/Control/' + imagenes_control[i]
     paciente = Sujeto(imagenes_control[i],1)
     pacientes.append(paciente)
 
@@ -84,16 +84,16 @@ pacientes_test = []
 np.random.shuffle(pacientes)
 for i in range(len(pacientes)):
     if pacientes[i].get_label() == 0:
-        #if train_enfermos < 114:
-        if train_enfermos < 8:
+        if train_enfermos < 114:
+        #if train_enfermos < 8:
             train_enfermos = train_enfermos + 1
             pacientes_training.append(pacientes[i])
         else:
             test_enf = test_enf + 1
             pacientes_test.append(pacientes[i])
     else:
-        if train_sanos < 5:
-        #if train_sanos < 55:
+        #if train_sanos < 5:
+        if train_sanos < 55:
             train_sanos = train_sanos + 1
             pacientes_training.append(pacientes[i])
         else:
@@ -133,10 +133,10 @@ for i in range(Y_shape):
     X_train = np.array(X_train)
     print(X_train.shape)
     y_train = np.array(y_train)
-    #X_train = X_train.reshape(169,157,136,1)
-    X_train = X_train.reshape(13,157,136,1)
-    #dataset_t = dataset_t.reshape(73,157,136,1)
-    dataset_t = dataset_t.reshape(12,157,136,1)
+    X_train = X_train.reshape(169,157,136,1)
+    #X_train = X_train.reshape(13,157,136,1)
+    dataset_t = dataset_t.reshape(73,157,136,1)
+    #dataset_t = dataset_t.reshape(12,157,136,1)
     y_train = to_categorical(y_train)
     target_final = []
     for i in range(len(pacientes_test)):
