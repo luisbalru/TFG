@@ -942,7 +942,108 @@ De la igualdad correspondiente a $\beta$, vemos que la única solución tiene la
 
 $$\hat{\beta} = \sum_{i=1}^{N} \hat{\alpha_i} y_i x_i$$
 
-para coeficientes $\hat{\alpha_i}$ distintos de cero que cumplen las restricciones citadas. Estas observaciones son los llamados vectores soporte. 
+para coeficientes $\hat{\alpha_i}$ distintos de cero que cumplen las restricciones citadas. Estas observaciones son los llamados vectores soporte. \\ 
+
+\textbf{SVM y núcleos}\\
+
+El clasificador descrito hasta ahora encuentra los bordes de los datos en el espacio de características de forma lineal. Podemos hacer este procedimiento más flexible aumentando el espacio de características usando extensiones basadas en polinomios o splines. Generalmente, los bordes lineales consiguen una mejor separación entre las clases del conjunto de entrenamiento en espacio mayores y se traducen en bordes no lineales en el espacio original. Una vez que las funciones base $h_m(x), m=1,\dots,M$ han sido seleccionadas, el procedimiento es igual que antes. Ajustamos el clasificador usando las características $h(x_i) = (h_1(x_i),\dots,h_M(x_i)), i = 1, \dots, N$ y producimos la función (no lineal) $\hat{f}(x) = h(x)^T \hat{\beta} + \hat{\beta_0}$. El target finalmente es, como antes,  $\hat{G}(x)= sign(\hat{f}(x))$. Utilicemos esta idea para extender el concepto de SVM. Si escribimos la función lagrangiana dual 
+
+$$L_D = \sum_{i=1}^{N}\alpha_i - \frac{1}{2}\sum_{i=1}^{N}\sum_{i'=1}^{N}\alpha_i \alpha_{i'} y_i y_{i'}\langle h(x_i),h(x_{i'})\rangle$$
+
+y utilizando la expresión de $f$, tenemos que
+
+$$f(x) = h(x)^T \beta + \beta_0$$
+$$= \sum_{i=1}^{N} \alpha_i y_i \langle h(x),h(x_i) \rangle + \beta_0$$
+
+Como antes, dado $\alpha_i, \beta_0$ puede calcularse por medio de la ecuación $$ y_i f(x_i) = 1$$ $\forall x_i \text{ con } 0 < \alpha_i < C$.
+
+Las dos expresiones anteriores involucran a $h$ a través de productos escalares. En realidad, no necesitamos conocer $h$ si no el núcleo
+
+$$K(x,x) = \langle h(x),h(x') \rangle$$
+
+que calcula los productos escalares en los espacios transformados. $K$ debe ser simétrica y semidefinida positiva. Existen tres núcleos popularmente utilizados en la literatura:
+\begin{itemize}
+		\item Polinomial de grado $d$: $K(x,x') = (1+\langle x,x'\rangle) ^d$
+		\item Base radial: $K(x,x') = exp(-\gamma \Vert x-x'\Vert^2)$
+		\item Red neuronal: $K(x,x') = tanh(k_1 \langle x, x' \rangle + k_2)$
+\end{itemize}
+
+Finalmente, la solución tiene la expresión
+
+$$\hat{f}(x) = \sum_{i=1}^{N} \hat{\alpha_i}y_i K(x,x_i)+\hat{\beta_0}$$
+
+\subsubsection{Validación cruzada con K-particiones}
+
+Validación cruzada es una técnica de validación de modelos que determina la robustez de los resultados de nuestro análisis estadístico. De forma específica, hace más robusta la fase de entrenamiento haciendo particiones k sucesivas, a su vez,de entrenamiento y validación, de forma que k-1 partes quedan para entrenar y una para testear el modelo. El proceso es llevado a cabo k veces reduciendo así la variabilidad. En nuestro proyecto utilizamos 10 particiones.
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.5]{cv.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Ejemplo de validación cruzada} 
+	\label{fig:cv}
+\end{figure}
+
+\subsubsection{Ajuste de hiperparámetros y GridSearch}
+
+Mientras ejecutamos la validación cruzada de 10 particiones intentamos encontrar los mejores parámetros $C$ y $\gamma$ a través de un grid search. Grid Search es una técnica utilizada para la optimización de hiperparámetros, asegurando así que los modelos no sobreajustan. Este proceso consiste en una búsqueda exhaustiva en un rango definido para la pareja $(C,\gamma)$. Aquella pareja que consiga el mayor \textit{recall} (\textit{accuracy} no es la mejor medida en biomedicina, puesto que lo que queremos evitar son los falsos negativos) es seleccionada para el training. Los rangos de valores son los siguientes:
+\begin{itemize}
+	\item $C = \{2^{i},i=-2,\dots,11\} $
+	\item $\gamma = \{2^{i}, i =-9,\dots,3\}$
+\end{itemize}
+
+\subsubsection{Regresión logística}
+
+La última pieza de nuestro clasificador, antes de explicar la arquitectura completa, es la regresión logística (\cite{esl}). Los modelos de regresión logística surgen por el deseo de modelar la probabilidad a posteriori de las $K$ clases a través de una función lineal en $x$, mientras que al mismo tiempo se aseguran de que suman 1 y se mantienen en el intervalo [0,1] (es una probabilidad). el modelo tiene la forma
+
+$$\log \frac{P(G=1| X =x)}{P(G=K|X=x} =  \beta_{10} + \beta_1^Tx$$
+ $$\log \frac{P(G=2| X =x)}{P(G=K|X=x} =  \beta_{20} + \beta_2^Tx$$
+ $$\vdots$$
+ $$\log \frac{P(G=K-1| X =x)}{P(G=K|X=x} =  \beta_{(K-1)0} + \beta_{K-1}^Tx$$
+ 
+ A pesar de que el modelo utiliza la última clase en el denominador de cada expresión, la elección de dicho denominador es arbitraria y la estimaciones son invariantes bajo esta elección. Un simple cálculo muestra que
+ 
+ $$P(G=k| X=x) = \frac{exp(\beta_{k0}+\beta_k^T x)}{1+\sum_{l=1}^{K-1}exp(\beta_{l0}+\beta_l^Tx)}$$
+  $$P(G=K| X=x) = \frac{1}{1+\sum_{l=1}^{K-1}exp(\beta_{l0}+\beta_l^Tx)}$$
+  
+  con $k=1,\dots,K-1$ y claramente suman 1. Para enfatizar la dependencia sobre el conjunto de parámetros $\theta = {\beta_{10},\beta_1^T,\dots,\beta_{(K-1)0},\beta_{K-1}^T}$, denotamos las probabilidades $P(G=k|X=x) = p_k(x;\theta)$. \\
+  
+  Cuando $K=2$ (nuestro caso), el modelo especialmente simple, ya que se trata exclusivamente de una función lineal. \\
+  
+  \textbf{Ajustando un modelo de regresión logística} \\
+  
+  Los modelos de regresión logística se ajustan habitualmente con el principio de máxima verosimilitud, usando la verosimilitud condicionada a G dado X. Dado que P(G|X) especifica completamente la distribución condicional, la utilización de la multinomial es adecuada. La \textit{log-verosimilitud} para $N$ observaciones es
+  
+  $$l(\theta) = \sum_{i=1}^{N} \log p_{g_i}(x_i;\theta)$$
+  donde $p_k(x_i;\theta) = P(G=k|X=x_i)$. Nos centramos en $K=2$, puesto es el caso que nos ocupa. Supongamos que las dos clases que tenemos se codifican como 0/1, de forma que $y_i=1$ cuando $g_i=1$ y $y_i=0$ cuando $g_i=2$. Sea $p_1(x;\theta) = p(x;\theta), p_2(x;\theta) = 1 -p(x;\theta)$. La \textit{log-verosimilitud} se puede escribir como
+  
+  $$l(\beta) = \sum_{i=1}^{N} \{ y_i \log p(x_i;\beta)+(1-y_i) \log(1-p(x_i;\beta)) \}$$
+  $$ = \sum_{i=1}^{N} \{y_i \beta^T x_i - \log(1+e^{\beta^T x_i}) \}$$
+  
+  Aquí, $\beta = \{\beta_{10},\beta_1 \}$ y asumimos que el vector de entrada $x_i$ incluye el término constante 1. Para maximizar la \textit{log-verosimilitud}, derivamos e igualamos a cero:
+  
+  $$\frac{\partial l(\beta)}{\partial \beta} = \sum_{i=1}^{N} x_i (y_i -p(x_i;\beta))=0$$
+  
+  siendo $p+1$ ecuaciones no lineales en $\beta$.  Para resolverlas utilizamos el algortimo de Newton-Raphson, que requiere el cálculo de la matriz Hessiana
+  
+  $$\frac{\partial^2 l(\beta)}{\partial \beta \partial \beta^T} = - \sum_{i=1}^{N} x_i x_i^T p(x_i;\beta)(1-p(x_i;\beta))$$
+  
+  Empezando con un $\beta^{old}$, tenemos que
+  
+  $$\beta^{new} = \beta^{old} - \left(\frac{\partial^2 l(\beta)}{\partial \beta \partial \beta^T}\right)^2 \frac{\partial l(\beta)}{\partial \beta}$$
+  
+  donde las derivadas se evalúan en $\beta^{old}$. Escribimos nuestras ecuaciones en forma matricial, de forma que $\textbf{y}$ es el vector que contiene a las $y_i$, $\textbf{X}$, de $N \times (p+1)$ la matriz de $x_i$, $\textbf{p}$   el vector de probabilidades $p(x_i;\beta^{old})$ y $\textbf{W}$ una matriz diagonal $N \times N$ con los pesos $p(x_i;\beta^{old})(1-p(x_i;\beta^{old}))$. Así, tenemos
+  
+  $$\frac{\partial l(\beta)}{\partial \beta} = X^T(y-p)$$
+  $$\frac{\partial^2 l(\beta)}{\partial \beta \partial \beta^T} = -X^TWX$$
+  
+  y por tanto, los pasos del método de Newton son
+  
+  $$\beta^{new} = \beta^{old} + (X^TWX)^{-1}X^T(y-p)$$
+  $$ = (X^TWX)^{-1} X^T W(X \beta^{old}+W^{-1}(y-p))$$
+  $$ = (X^TWX)^{-1} X^T Wz$$
+  
+  Parece que $\beta = 0$ es un buen punto de inicio para el proceso iterativo, aunque la convergencia nunca está garantizada. Generalmente el algoritmo converge, ya que la \textit{log-verosimilitud} es cóncava.
+  
 \newpage
 \section{Bibliografía}
 
