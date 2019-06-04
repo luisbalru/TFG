@@ -852,7 +852,97 @@ Desarrollo ahora el contenido matemático de Análisis de Componentes Principale
 	
 
 En nuestro proyecto, utilizamos siempre PCA con una varianza explicada del 95\%.
+\newpage
+\subsection{Clasificación}
 
+En esta sección expongo los distintos algoritmos que hemos usado para clasificar a los sujetos según las imágenes MRI. El primero de ellos será SVM. Más tarde, nos enfrentaremos a la necesidad de ajustar los hiperparámetros del modelo optimizando así los resultados. De igual manera, nos enfrentaremos al problema del sobreajuste, que solucionamos con Validación Cruzada de 10 particiones. Será necesaria también la mención de las redes neuronales profundas y, finalmente, la regresión logística.
+
+\subsubsection{SVM}
+
+SVM es un clasificador (aprendizaje supervisado) muy potente introducido en 1995. Consigue resultados buenos en clasificación especialmente en diagnóstico médico. SVM se basa en el principio de minimización del riesgo estructural proveniente de la teoría del aprendizaje en estadística. Su objetivo es encontrar un hiperplano separador óptimo entre los miembros y los no miembros de una clase en un espacio de características de varias dimensiones. La entrada al algoritmo está formada por un subconjunto de características elegidas por medio de la extracción y selección de las mismas. En nuestro caso, las clases son Control (sano) y PD (enfermo de PD), por lo que dividir los pacientes sigue siendo nuestro objetivo. Veamos su fundamentación matemática (\cite{esl}): \\
+
+Supongamos que disponemos de un conjunto de instancias divididas en dos clases linealmente separables. Nuestro conjunto de entrenamiento está formado por $N$ parejas $(x_1,y_1),(x_2,y_2),\dots (x_n,y_n)$ con $x_i \in \mathbb{R}^p, y_i \in \{1,-1\}$. Definimos el hiperplano
+
+$$\{x:f(x) = x^T \beta + \beta_0 = 0 \}$$
+
+donde $\beta$ es un vector unitario. La función que clasifica inducida por $f(x)$ es 
+
+$$G(x) = sign[x^T \beta + \beta_0]$$
+
+
+Esta última expresión representa la distancia con signo de un punto $x$ al hiperplano $f(x) = x^T \beta + \beta_0=0$. Dado que las clases son separables, podemos encontrar una solución $f(x) = x^T \beta + \beta_0$ con $y_if(x_i) > 0 \forall i$. En consecuencia, somos capaces de encontrar un hiperplano que genera el mayor \textit{margen} entre las instancias de entrenamiento para las clases 1 y -1 (Figura 3.7)
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.5]{hip.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Hiperplano separador con el margen y los vectores soporte (aquellos que definen la región)} 
+	\label{fig:hip}
+\end{figure}
+
+El problema de optimización es el siguiente: 
+$$max_{\beta, \beta_0, \Vert \beta \Vert = 1} M$$
+$$\text{sujeto a } y_i(x_i^T\beta + \beta_0) \geq M, i=1,\dots,N$$
+
+La banda tiene una anchura de $2M$ ($M = \frac{1}{\beta}$ desde cada clase) y se llama margen. Por la definición de $M$, es posible reformular el problema de una forma más sencilla
+
+$$min{\beta, \beta_0} \beta$$
+$$\text{sujeto a } y_i(x_i^T\beta + \beta_0) \geq M, i=1,\dots,N$$
+
+Este es un problema de optimización con funciones convexas que se resuelve con los procedimientos clásicos del análisis real de varias variables. \\
+
+Supongamos ahora que las clases se solapan en el espacio de características. Una forma de enfrentarnos a ese solapamiento es maximizar $M$ permitiendo a algunos puntos estar mal clasificados (quedarse en el lado erróneo del margen). Si definimos esa anomalía a a través de una variable $\xi = (\xi_1,\dots,\xi_n)$, podemos representar el problema de restricciones anterior de la siguiente manera
+
+$$y_i(x_i^T\beta+\beta_0) \geq M(1-\xi_i)$$
+$\forall i, \xi_i \geq 0, \sum_{i=1}^{N} \xi_i \leq cte$.
+
+La idea es la siguiente. El valor $\xi_i$ en la restricción $y_i(x_i^T\beta+\beta_0) \geq M(1-\xi_i)$ es la cantidad proporcional por la que la predicción $f(x_i) = x_i^T \beta + \beta_0$ está en el lado erróneo del margen. Por tanto, acotando $\sum \xi_i$, acotamos la cantidad proporcional total a las predicciones mal situadas. Estos errores en la clasificación ocurren cuando $\xi_i > 1$, así que acotar $\sum \xi_i$ por una constante $K$ acota superiormente el número de instancias mal clasificadas por $K$.
+
+Como antes, podemos eliminar la restricción sobre la norma de $\beta$, ya que $M = \frac{1}{\Vert \beta \Vert}$ y escribimos
+
+$$min \Vert \beta \Vert$$
+$$\text{sujeto a } y_i(x_i^T \beta + \beta_0) \geq 1-\xi_i \forall i \text{  y  } \xi_i \geq 0, \sum \xi_i \leq cte.$$ 
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.5]{hip2.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Hiperplano separador con el margen y clases solapadas} 
+	\label{fig:hip2}
+\end{figure}
+
+El problema anterior es cuadrático con inecuaciones lineales como restricciones, luego es un problema de optimización convexo. Para resolverlo, utilizamos los multiplicadores de Lagrange. Reescribimos la expresión de una forma más conveniente desde el punto de vista computacional
+
+$$min_{\beta,\beta_0} \frac{1}{2} \Vert \beta \Vert^2 + C \sum_{i=1}^{N} \xi_i$$
+$$\text{sujeto a } \xi_i \geq 0, y_i(x_i^T \beta + \beta_0) \geq 1- \xi_i \forall i$$
+
+donde $C$ es un parámetro que refleja el coste (para un problema donde es linealmente separable, $C= \infty$).
+
+El lagrangiano es
+
+$$L_p = \frac{1}{2} \Vert \beta \Vert^2 + C \sum_{i=1}^{N} \xi_i - \sum_{i=1}^{N}\alpha_i[y_i(x_i^T \beta + \beta_0)-(1-\xi_i)] - \sum_{i=1}^{N} \mu_i \xi_i$$
+
+en la que minimizamos respecto de $\beta, \beta_0$ y $\xi_i$. Derivando e igualando a cero obtenemos
+
+$$\beta = \sum_{i=1}^{N} \alpha_i y_i x_i,$$
+$$0 = \sum_{i=1}^{N} \alpha_i y_i$$
+$$\alpha_i = C-\mu_i \forall i$$
+
+además de las restricciones $\alpha_i,\mu_i,\xi_i \geq 0 \forall i$. Sustituyendo en la expresión anterior, obtenemos que
+
+$$L_D = \sum_{i=1}^{N}\alpha_i - \frac{1}{2}\sum_{i=1}^{N}\sum_{i'=1}^{N}\alpha_i \alpha_{i'} y_i y_{i'}x_i^T x_{i'}^T$$
+
+Ahora, maximizamos $L_D$ sujeto a que $0 \leq \alpha_i \leq C$ y $\sum_{i=1}^{N} \alpha_i y_i=0$. Además de las ya presentadas, las condiciones de Karush-Kuhn-Tucker (\cite{kkt}) incluyen las restricciones
+
+$$\alpha_i[y_i(x_i^T \beta + \beta_0)-(1-\xi_i)] = 0$$
+$$\mu_i \xi_i = 0$$
+$$y_i(x_i^T \beta + \beta_0)-(1-\xi_i) \geq 0$$
+
+para $i = 1,\dots, N$\\
+
+De la igualdad correspondiente a $\beta$, vemos que la única solución tiene la forma
+
+$$\hat{\beta} = \sum_{i=1}^{N} \hat{\alpha_i} y_i x_i$$
+
+para coeficientes $\hat{\alpha_i}$ distintos de cero que cumplen las restricciones citadas. Estas observaciones son los llamados vectores soporte. 
 \newpage
 \section{Bibliografía}
 
