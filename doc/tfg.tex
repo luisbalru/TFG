@@ -212,6 +212,12 @@ M puede ser manipulado usando señales de radio frecuencia. Cuando se aplican, l
  	\label{fig:nmr}
  \end{figure}
 
+\subsection{Datos de entrada: PPMI}
+
+A pesar de no ser una herramienta matemática, no puedo pasar sin mencionar, y al mismo tiempo agradecer, a \textit{Parkinson's Progression Makers Initiative} (PPMI). PPMI es un estudio clínico de gran importancia que evalúa las zonas cerebrales de interés usando técnicas avanzadas de imagen, muestreos biológicos y comportamientos y ensayos clínicos para identificar biomarcadores de la enfermedad del Parkinson. PPMI se lleva a cabo en Estados Unidos, Europa, Israel y Australia y, en nuestro caso, evaluó el proyecto para cedernos el acceso a su base de datos (adni.loni.usc.edu), adscrita a la Universidad Sur de California. \\
+
+Descargamos más de 300 imagénes 3D cerebrales en formato DICOM. DICOM es el acrónimo de \textit{Digital Imaging and Communications in Medicine}. Es, al mismo tiempo, un protocolo de comunicación y un formato de archivo, lo que significa que almacena información médica, como imágenes MRI, junto con la información personal del paciente. El formato garantiza que todos esos datos se mantienen juntos, haciendo posible la transferencia de los mismos entre los profesionales. Tras eliminar archivos corruptos y duplicados, obtuvimos un dataset de 242 imágenes (78 pacientes en el grupo de control y 164 enfermos de Parkinson). 
+
 \subsection{Normalización}
 
 Antes de manipular o extraer información, es fundamental normalizar el conjunto de datos completo para poder comparar las imágenes. Cada imagen MRI debería representar el mismo espacio, i.e., cada región de la imagen debe describir la misma región del cerebro. Los ventrículos cerebrales deben estar situados en las mismas coordenadas para cada imagen de cada paciente. \\
@@ -223,7 +229,7 @@ Dado que los cerebros pueden variar mucho entre pacientes, este objetivo es dif�
 	\item Redimensionar las imágenes para que todas tengan las mismas medidas.
 \end{itemize}
 
-Para completar estas dos tareas, nos remitimos a una plantilla estándar. Para la normalización, utilizamos Statistical Parametric Mapping (SPM \cite{spm}), que es un algoritmo que analiza cada \textit{voxel} usando un test estadístico estándar. Lo utilizamos dada su gran efectividad y su librería de Matlab (a pesar de que el resto del proyecto se realiza en Python). Los valores de los \textit{voxel} son distribuidos de acuerdo a una función de densidad, que suele provenir de las distribuciones T de Student o F. En la Figura 3.2 podemos ver un ejemplo de una imagen antes y después de la normalización.
+Para completar estas dos tareas, nos remitimos a una plantilla estándar. Para la normalización, utilizamos Statistical Parametric Mapping (SPM \cite{spm}), que es un algoritmo que analiza cada \textit{voxel} usando un test estadístico estándar. Lo utilizamos dada su gran efectividad y su librería de Matlab (a pesar de que el resto del proyecto se realiza en Python). Los valores de los \textit{voxel} son distribuidos de acuerdo a una función de densidad, que suele provenir de las distribuciones T de Student o F. En la Figura 3.2 podemos ver un ejemplo de una imagen antes y después de la normalización. Otra de las acciones importantes llevadas a cabo sobre los datos es una segmentación que divide genera las imágenes con su contenido completo, la materia gris (C1) y la materia blanca (C2).
 
  \begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
 	\centering
