@@ -14,6 +14,7 @@ dif = cC2 - cC1
 plt.plot(range(0,len(dif)),dif.tolist())
 plt.xlabel("Slice")
 plt.ylabel("Diferencia de accuracy")
+plt.title("Diferencia de accuracy para la diferencia C2-C1 en cada slice")
 plt.plot(range(0,len(dif)),np.zeros(len(dif)))
 plt.show()
 
@@ -54,6 +55,6 @@ plt.show()
 plt.plot(range(0,len(cPD)),cPD.tolist())
 plt.xlabel("Slice")
 plt.ylabel("Número de componentes")
-plt.title("Número de componentes principales por slice")
+plt.title("Número de componentes principales por slice cerebro completo")
 plt.show()
 

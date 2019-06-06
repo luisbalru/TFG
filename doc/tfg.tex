@@ -1164,14 +1164,128 @@ Tras la introducción a redes neuronales y deep learning, relaciono la técnica 
 
 \section{Metodología y experimentos}
 
-En la presente sección desgloso los distintos experimentos realizados, explicando sus motivaciones y resultados principales.
+En la presente sección desgloso los distintos experimentos realizados, explicando sus motivaciones y resultados principales. En resumen, estos han sido los experimentos:
 
-\subsection{Experimento 1}
+\begin{itemize}
+	\item El primer experimento consistió en decidir qué plano de las imágenes MRI es más importante para clasificar sujetos: X (Axial), Y (Coronal) o Z (Sagittal). Esto nos hizo reducir tiempo de cómputo y slices poco útiles.
+	\item Tras decidir que plano utilizar, estudiamos el accuracy de cada slice y comparamos el rendimiento de la materia gris respecto al cerebro completo para mejorar el rendimiento de la clasificación.
+	\item Primera optimización para los cortes más relevantes, en particular cortes del plano Coronal usando stacking y SVM.
+	\item Segunda optimización con los mismos cortes usando stacking y CNN.
+\end{itemize}
 
+\newpage
+
+\subsection{Experimento 1: Determinando el mejor plano}
+
+En el experimento nos enfrentamos a la cuestión de qué plano dentro de una MRI es más representativo a la hora de clasificar a los pacientes, de forma que en lo sucesivo sólo utilizaremos este plano, ahorrando así tiempo de cómputo. \\
+
+Usamos 100 pacientes en este experimento, 45 en el grupo de control y 55 enfermos de PD de la base de datos PPMI, normalizamos con la herramienta SPM de Matlab  y utilizamos SVM con el núcleo RBF.
+
+\subsubsection{Material y metodología}
+
+Las imágenes de los sujetos fueron, en primer lugar, segmentadas a través de la rutina de segmentación implementada en SPM12 (\cite{spm}). Tras ello, normalizamos y cambiamos el tamaño de la imagen a los bordes [-78 -112 -60; 78 76 85]. Extraemos características con la transformada discreta Wavelets 2D usando la transformada Bior3.3 hasta nivel 2. Tras ello, seleccionamos las características que explican el 95\% de la variabilidad en el conjunto de datos con PCA. Por último, el resultado de PCA fue ejecutado en SVM usando validación cruzada de 10 particiones y un conjunto de entrenamiento del 70\% de los datos. \\
+
+Computamos los coeficientes wavelets 2D para cada slice y para cada paciente y llevamos a cabo la clasificación. Cada vez que entrenamos un SVM se realiza una permutación aleatoria de los pacientes para evitar el sesgo, de forma que el modelo no sobreajusta, y realizamos 10 clasificaciones cada vez, quedándonos con la media de los resultados por cada slice. \\
+
+Este proceso se lleva a cabo en cada uno de los planos de la imagen MRI: X,Y y Z. A continuación, presentamos los resultados.
+
+\subsubsection{Resultados}
+
+Queríamos comprobar qué plano tiene el mejor accuracy para así usarlo en los siguientes pasos. Analizamos los resultados de la clasificación para cada slice por separado. Llevamos a cabo esta prueba para cada tipo de plano, realizando la clasificación utilizando las mismas características en cada slice para cada sujeto.
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.75]{exp1-axial.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Resultados para el plano axial} 
+	\label{fig:exp1-axial}
+\end{figure}
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.75]{exp1-cor.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Resultados para el plano coronal} 
+	\label{fig:exp1-cor}
+\end{figure}
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.75]{exp1-sag.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Resultados para el plano sagittal} 
+	\label{fig:exp1-sag}
+\end{figure}
+
+A primera vista no parece haber mucha diferencia entre las gráficas. Por tanto, he hecho un estudio más profundo contabilizando cuántas slices ``buenas'' (accuracy mayor del 75\%) hay para cada corte. Los resultados son los siguientes:
+
+\begin{table}[H]
+	\begin{tabular}{|c|c|c|c|c|c|}
+		\hline
+		& \textbf{\begin{tabular}[c]{@{}c@{}}Accuracy\\  medio\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Número \\ \\ de buenas\end{tabular}} & \textbf{\begin{tabular}[c]{@{}c@{}}Slices \\ \\ buenas\end{tabular}} & \textbf{Accuracy}                                                       & \textbf{\begin{tabular}[c]{@{}c@{}}Accuracy\\ Máximo\end{tabular}} \\ \hline
+		\textbf{Axial}    & 0.5554140                                                          & 0                                                                       & -                                                                    & -                                                                       & \textless{}0.75                                                    \\ \hline
+		\textbf{Coronal}  & 0.5974603                                                          & 4                                                                       & \begin{tabular}[c]{@{}c@{}}21,79,\\ 140,145\end{tabular}             & \begin{tabular}[c]{@{}c@{}}0.767,0.767, \\ \\ 0.833, 0.767\end{tabular} & 0.833                                                              \\ \hline
+		\textbf{Sagittal} & 0.5866421                                                          & 3                                                                       & 36,39,44                                                             & 0.799, 0.756, 0.799                                                     & 0.799                                                              \\ \hline
+	\end{tabular}
+	\caption{Resultados del experimento 1}
+\end{table}
+
+Identificamos que el plano Coronal (Y) es el que tiene mayor accuracy medio y mayor número de slices con accuracy alto, por lo que lo utilizamos en el resto de experimentos.
+
+\newpage 
 \subsection{Experimento 2}
 
+En este experimento, utilizamos 165 (65 del grupo de control y 100 enfermos de PD) imágenes MRI para estudiar cómo se comporta el rendimiento de clasificación utilizando sólo la información de la materia gris, de la materia blanca o del cerebro completo. Presentamos varias gráficas comparativas para cada tipo de imagen en cada corte del plano Coronal.
+
+\subsubsection{Material y metodología}
+
+Las imágenes de los sujetos fueron, en primer lugar, segmentadas a través de la rutina de segmentación implementada en SPM12 (\cite{spm}). Tras ello, normalizamos y cambiamos el tamaño de la imagen a los bordes [-78 -112 -60; 78 76 85]. Extraemos características con la transformada discreta Wavelets 2D usando la transformada Bior3.3 hasta nivel 2. Tras ello, seleccionamos las características que explican el 95\% de la variabilidad en el conjunto de datos con PCA. Por último, el resultado de PCA fue ejecutado en SVM usando validación cruzada de 10 particiones y un conjunto de entrenamiento del 70\% de los datos. \\
+
+Computamos los coeficientes wavelets 2D para cada slice y para cada paciente y llevamos a cabo la clasificación. Cada vez que entrenamos un SVM se realiza una permutación aleatoria de los pacientes para evitar el sesgo, de forma que el modelo no sobreajusta, y realizamos 10 clasificaciones cada vez, quedándonos con la media de los resultados por cada slice. \\
+
+Llevamos a cabo este proceso para C1 (materia gris), C2 (materia blanca) y C1+C2 de las imágenes. 
+
+\subsubsection{Resultados}
+
+El objetivo de este experimento era comprobar qué tipo de información es más interesante para obtener el máximo accuracy en la clasificación. Además, descartar una parte de la imagen hace que el tiempo de cómputo general se reduzca mucho. \\
+
+Presentamos los siguientes gráficos: En primer lugar, una imagen que muestra los resultados del accuracy para C1 y C2 superpuestos. A continuación, la diferencia de accuracy C2-C1 en cada slice (para ver la tendencia). Por último, presentamos el número de componentes principales para cada tipo de información.
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.7]{accuracyc1c2.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Comparativa de accuracy entre C1 y C2} 
+	\label{fig:comp-c1-c2}
+\end{figure}
+
+No vemos claramente qué tipo de información es más interesante. Veamos la diferencia:
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.7]{C2-C1.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Diferencia de accuracy entre C2 y C1 para cada slice} 
+	\label{fig:dif-c2-c1}
+\end{figure}
+
+La línea naranja representa las slices donde el accuracy entre C2 y C1 es igual. Lo que queda por encima de la recta indica que C2 tiene mejor accuracy y viceversa. Veamos ahora el número de componentes principales para cada tipo de información.
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.7]{pcc1.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Número de componentes principales por slice para C1} 
+	\label{fig:pcc1}
+\end{figure}
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.7]{pcc2.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Número de componentes principales por slice para C2} 
+	\label{fig:pcc2}
+\end{figure}
+
+\subsubsection{Conclusiones}
+
+La conclusión que extraemos es que ambos tipos de información tienen un comportamiento similar en rendimiento de clasificación. De entre el corte 0 a l 75 parece predominar la materia gris, y hasta el 189 la materia blanca obtiene ventaja. Se puede observar que la materia gris genera el máximo score entorno al corte 85. Además, desde el punto de vista estadístico, no se puede asegurar que una contenga más información relevante que la otra, por lo que optamos por seguir con toda la información del cerebro en los siguientes experimentos, a pesar de el incremento en el coste computacional que supone. 
+\newpage
 \subsection{Experimento 3}
-  
+ \newpage
 \subsection{Experimento 4}
 
 \newpage
