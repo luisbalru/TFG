@@ -218,6 +218,7 @@ A pesar de no ser una herramienta matemática, no puedo pasar sin mencionar, y a
 
 Descargamos más de 300 imagénes 3D cerebrales en formato DICOM. DICOM es el acrónimo de \textit{Digital Imaging and Communications in Medicine}. Es, al mismo tiempo, un protocolo de comunicación y un formato de archivo, lo que significa que almacena información médica, como imágenes MRI, junto con la información personal del paciente. El formato garantiza que todos esos datos se mantienen juntos, haciendo posible la transferencia de los mismos entre los profesionales. Tras eliminar archivos corruptos y duplicados, obtuvimos un dataset de 242 imágenes (78 pacientes en el grupo de control y 164 enfermos de Parkinson). 
 
+
 \subsection{Normalización}
 
 Antes de manipular o extraer información, es fundamental normalizar el conjunto de datos completo para poder comparar las imágenes. Cada imagen MRI debería representar el mismo espacio, i.e., cada región de la imagen debe describir la misma región del cerebro. Los ventrículos cerebrales deben estar situados en las mismas coordenadas para cada imagen de cada paciente. \\
@@ -1050,8 +1051,53 @@ $$\log \frac{P(G=1| X =x)}{P(G=K|X=x} =  \beta_{10} + \beta_1^Tx$$
   
   Parece que $\beta = 0$ es un buen punto de inicio para el proceso iterativo, aunque la convergencia nunca está garantizada. Generalmente el algoritmo converge, ya que la \textit{log-verosimilitud} es cóncava.
   
+\subsubsection{Optimización: En busca de los mejores cortes}
 
+Una vez explicadas las principales herramientas dentro de la clasificación, es momento de conectarlas y darles sentido. Nuestro objetivo es encontrar aquellos cortes (\textit{slices}) que nos dan la información más veraz a la hora de diagnosticar la enfermedad del Parkinson. En trabajos anteriores como  \cite{irojas} o \cite{alberto}  se utilizó un algoritmo genético como optimización (NSGA-II). Yo propongo una alternativa que considero más eficiente desde un punto de vista computacional. Mi idea nace en el seno de los llamados \textit{ensemble learners}. En particular, utilizo \textit{stacking} de la siguiente manera. En una primera fase, utilizando solamente los 189 cortes del plano Coronal (se explicará en la siguiente sección por qué) genero 189 clasificadores, uno por slice, de manera que cada  paciente pasa por todos ellos (en su slice correspondiente, especializándose en ella), aprende las características propias de las mismas y genera una predicción sobre el conjunto de test. Así, cuando se han completado los 189 procesos, contamos con un dataset nuevo repleto de las predicciones generadas por los modelos, de forma que cada fila es un paciente y cada columna un slice (por lo que la dimensión es $Num\_pacientes \times 189$). Aquí interviene la segunda parte del \textit{stacking}, en la que empleo un modelo lineal (regresión logística) para calcular los pesos de cada slice, viendo cuál es la que tiene más transcendencia a la hora de clasificar un paciente como enfermo o sano. En cada una de las fases, separo los datos en train y test, llevando a cabo una validación cruzada. 
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.5]{stacking.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Modelo de stacking} 
+	\label{fig:stack}
+\end{figure}
+
+\subsubsection{Deep Learning y Stacking}
+
+Antes de describir con detalle la herramienta de deep learning que he utilizado, las Redes Neuronales Convolucionadas (CNN), introduzco qué es una Red Neuronal.
+
+\begin{itemize}
+	\item \textbf{REDES NEURONALES}
+	
+	Una Red Neuronal es un sistema computacional que trata de imitar o aproximar la sinápsis que se produce entre las neuronas del cerebro humano. Matemáticamente hablando, podemos decir que estos sistemas tratan de aproximar funciones dados unos inputs. En 
+\end{itemize}
+
+\newpage 
+
+\section{Metodología y experimentos}
+
+En la presente sección desgloso los distintos experimentos realizados, explicando sus motivaciones y resultados principales.
+
+\subsection{Experimento 1}
+
+\subsection{Experimento 2}
+
+\subsection{Experimento 3}
   
+\subsection{Experimento 4}
+
+\newpage
+
+\section{Desarrollo del proyecto software}
+
+\newpage
+
+\section{Conclusiones y proyectos futuros} 
+
+\newpage
+
+\section{Código}
+
 \newpage
 \section{Bibliografía}
 
