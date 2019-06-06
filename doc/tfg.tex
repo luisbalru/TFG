@@ -1064,13 +1064,101 @@ Una vez explicadas las principales herramientas dentro de la clasificación, es 
 
 \subsubsection{Deep Learning y Stacking}
 
-Antes de describir con detalle la herramienta de deep learning que he utilizado, las Redes Neuronales Convolucionadas (CNN), introduzco qué es una Red Neuronal.
+Antes de describir con detalle la herramienta de deep learning que he utilizado, las Redes Neuronales Convolucionadas (CNN), introduzco qué es una Red Neuronal. Para su estudio, he realizado los cursos \cite{curso-cnn}, \cite{curso-nn}, consultas en  \cite{miriam} y he seguido de forma fidedigna el libro \cite{berzal}.
 
 \begin{itemize}
 	\item \textbf{REDES NEURONALES}
 	
-	Una Red Neuronal es un sistema computacional que trata de imitar o aproximar la sinápsis que se produce entre las neuronas del cerebro humano. Matemáticamente hablando, podemos decir que estos sistemas tratan de aproximar funciones dados unos inputs. En 
+	Una Red Neuronal es un sistema computacional que trata de imitar o aproximar la sinápsis que se produce entre las neuronas del cerebro humano. Matemáticamente hablando, podemos decir que estos sistemas tratan de aproximar funciones dados unos inputs (de hecho, son aproximadores universales). Estas redes, al igual que un cerebro humano, están compuestas por neuronas. Cada neurona posee un peso, una función de activación y está conectada con otro conjunto de neuronas:
+	
+	\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+		\centering
+		\includegraphics[scale=0.48]{nn1.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+		\caption{Comparación entre el cerebro humano y una red neuronal (\cite{miriam})} 
+		\label{fig:nn1}
+	\end{figure}
+	
+	Respecto de la topología de las redes y su conectividad, encontramos distintos casos en la literatura (\cite{berzal}):
+	
+	\begin{itemize}
+		\item En cadena
+		\item En cascada
+		\item Con saltos
+		\item Con múltiples cabezas
+		\item Arquitecturas especializadas
+	\end{itemize}
+	
+	Como ejemplos de funciones de activación, presento las más significativas (\cite{miriam}):
+	
+	\begin{enumerate}
+		\item Función sigmoide $\sigma$, descrita por la curva $\sigma(x) = \frac{1}{1+e^{-x}}$, produciendo valores en el intervalo [0,1]. Son útiles para la última capa de la red para clasificaciones multietiqueta.
+		\item Función ReLu (\textit{Rectified Linear Unit}) cuya curva es $f(x) = max(0,x)$.
+		\item Función \textit{Softmax}.  Normalmente interpretada como una distribución de probabilidad, tiene la siguiente expresión $\sigma(x)_i = \frac{e^{x_i}}{\sum_{k=1}^{K} e^{x_k}}$
+			\end{enumerate}
+		Las redes neuronales suelen tener una gran cantidad de capas. Aquellas que no son las de entrada y la salida se llaman capas ocultas, y sirven para aproximar funciones más complejas. 
+		
+		\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+			\centering
+			\includegraphics[scale=0.34]{nn2.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+			\caption{Ejemplo de red sencilla (izquierda) y red con capas ocultas (derecha) (\cite{esl})} 
+			\label{fig:nn2}
+		\end{figure}
+	
+
+
+\item \textbf{CNN} \\ \\
+Una vez terminada la breve introducción sobre redes neuronales, nos introducimos en las redes neuronales convolutivas. Las redes convolutivas son las redes neuronales artificales que se utilizan habitualmente para resolver múltiples problemas prácticos que requieren procesar imágenes. Por ejemplo, cuando la cámara frontal de un vehículo autónomo capta una señal de tráfico, debe identificar de qué señal concreta se trata. También puede interesarnos detectar qué tipo de objetos parecen en la imagen correspondiente a una escena y localizarlos dentro de la imagen (detección). Incluso podemos utilizar redes convolutivas como parte de un sistema que genera una descripción textual del contenido de una imagen, con lo que podemos indexar imágenes para realizar búsquedas por contenido en bases de datos de imágenes o sintetizar una señal de voz a partir de la descripción textual para usuarios invidentes. \\
+
+¿En qué se diferencian las redes convolutivas de las redes multicapa presentadas antes? Principalmente, en que tanto sus entradas como sus salidas pueden ser estructuradas. Las redes convolutivas nos permitirán aprovechar dicha estructura para diseñar arquitecturas especializadas que resuelvan de un modo más eficiente problemas que trabajen con tipos particulares de señales. \\
+
+En lugar de recibir un vector de entradas correspondientes a diferentes variables, recibiremos como entrada un vector, matriz o tensor en el que podemos explotar la relación física existente entre las diferentes entradas. EN el caso de señales unidimensionales, puede tratarse de una señal de audio en el que entradas adyacentes corresponden a muestras consecutivas en el tiempo. En el caso de señales bidimensionales, las entradas pueden corresponder a los píxeles de una imagen. También podemos tener señales bidimensionales de audio, como las provenientes de un array de micrófonos. En ocsaiones, las señales de entrada puede que tengan más de dos dimensiones, como las imágenes en color, los datos volumétricos de imágenes médicas o un simple vídeo. \\
+
+La salida de una red convolutiva puede ser convencional, para resolver problemas de clasificación usando una capa softmax (nuestro caso) o problemas de regresión. No obstante, habrá situaciones en las que su salida también reflejará la estructura de problemas que pretendemos resolver. Si trabajamos con imágenes, podemos construir una red convolutiva cuya salida también sea una imagen (\cite{berzal}). \\ \\
+
+En lo siguiente, establecemos que nuestras entradas serán imágenes (slices del plano coronal). Estas redes tienen la particularidad de que las capas más cercanas a la imagen buscan características de bajo nivel, como es el caso de formas, texturas y colores. Mientras que las capas más cercanas a la salida buscan características semánticas de alto nivel, como personas, animales, tumores o deformaciones. Cabe destacar que basan su eficacia en la cantidad de capas dentro de su arquitectura (\cite{miriam}). Conforme crece el número de capas, el rendimiento mejora aunque aumenta, de igual manera, el coste computacional. \\
+
+Situémonos en nuestro caso. Nuestras imágenes tienen unas dimensiones de 157x136x1= 21352 neuronas o pesos que debemos actualizar y propagar (el 1 es por estar en blanco y negro). Como se puede imaginar, el coste es brutal. Por ello, utilizamos capas especiales que palíen este defecto, como son las capas \textit{convolutional}, \textit{pooling} y \textit{dropout}.
+
+\begin{itemize}
+	\item Capas \textit{Convolutional} \\
+	
+	En ellas, cada neurona de una capa posterior cuenta con un rango de visión de la capa anterior, llamado campo local receptivo, de forma que las neuronas de la capa anterior que presenten una activación adecuada, contribuirán (a través de la convolución) a la entrada de la capa posterior. El ancho y alto del campo local receptivo  se denomina filtro y la cantidad de píxeles de la ventana se conoce como paso o stride. El objetivo es detectar una cierta característica en ventanas superpuestas y en distintas posiciones de la imagen. A las capas posteriores se les conoce como mapa de características. Después de cada convolución, se suele introducir una capa de activación ReLu.
+	
+	\item Capas \textit{Pooling} \\
+	
+	Debido a que la información generada por los mapas de características es ingente, es necesario resumirlos en una matriz que contenga la información más relevante. A este proceso se le llama Pooling. Cada neurona extraerá solamente el valor máximo o el valor medio de cada ventana (según el algoritmo) ignorando el resto. Así pues, el objetivo final de estas capas es reducir el número de pesos, evitando el sobreaprendizaje. \cite{miriam}
+	
+		\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+		\centering
+		\includegraphics[scale=0.6]{pooling.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+		\caption{Ejemplo de pooling con máximo} 
+		\label{fig:pooling}
+	\end{figure}
+	\vspace{2cm}
+		\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+		\centering
+		\includegraphics[scale=0.5]{conv-pool.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+		\caption{Ejemplo de convolución + pooling} 
+		\label{fig:conv+pool}
+	\end{figure}
+	
+\newpage	
+	\item Capas \textit{Dropout} \\
+	
+	Una nueva medida para evitar el sobreajuste. Se ``desconectan'' neuronas de forma aleatoria (llevar a cero un conjunto aleatorio de activaciones). 
+						
+		\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+		\centering
+		\includegraphics[scale=0.3]{dropout.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+		\caption{Ejemplo de dropout} 
+		\label{fig:drop}
+	\end{figure}				
 \end{itemize}
+
+ 
+\end{itemize}
+
+Tras la introducción a redes neuronales y deep learning, relaciono la técnica \textit{stacking} con las redes profundas convolutivas. Mi voluntad es comparar los métodos de clasificación tradicionales (en este trabajo encarnados por SVM) con las redes, por lo que sustituiré SVM por CNN para completar la optimización en la búsqueda de las mejores slices. Todo ello será explicado con detenimiento en la siguiente sección.
 
 \newpage 
 
