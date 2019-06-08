@@ -14,7 +14,7 @@
 	\normalfont \normalsize 
 	\textsc{\textbf{Aprendizaje Automático (2019)} \\ Doble Grado en Ingeniería Informática y Matemáticas \\ Universidad de Granada} \\ [25pt] % Your university, school and/or department name(s)
 	\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
-	\huge Memoria Práctica 3 \\ % The assignment title
+	\huge TFG \\ % The assignment title
 	\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
 }
 
@@ -1291,6 +1291,105 @@ La conclusión que extraemos es que ambos tipos de información tienen un compor
 \newpage
 
 \section{Desarrollo del proyecto software}
+
+\subsection{Análisis y diseño}
+
+\subsubsection{Subsistemas}
+
+El sistema de información desarrollado se divide en 5 subsistemas, que son: Subsistema de normalización, Subsistema experimento 1, Subsistema experimento 2, Subsistema experimento 3 y Subsistema experimento 4. El primero de ellos es auxiliar y se encarga de normalizar, segmentar y generar las distintos tipos de fuentes de datos (C1, C2 y cerebro completo) para el resto de subsistemas. Los siguientes llevan a cabo cada uno de los experimentos descritos y justificados en la sección anterior. A continuación se presentan los requisitos de datos y funcionales del sistema completo.
+
+\subsubsection{Requisitos de datos}
+
+\begin{itemize}
+	\item[R.D. 1:] Imágenes en bruto de MRI 3D en formato .nii (originalmente DICOM y transformado después).
+	\item[R.D. 2:] Imágenes segmentadas y normalizadas en formato .nii con tres tipos de información: materia blanca, gris y cerebro completo.
+	\item[R.D. 3:] Imágenes preprocesadas C1.
+	\item[R.D. 4:] Imágenes preprocesadas C2.
+	\item[R.D. 5:] Imágenes preprocesadas cerebro completo.
+	\item[R.D. 6:] Características vía coeficientes de transformada discreta Wavelet 2D.
+	\item[R.D. 7:] Características vía PCA.
+	\item[R.D. 8:] Resultados de los experimentos: Gráficas, datos, valores de rendimiento, medidas.
+	\item[R.D. 9:] Predicciones sobre el conjunto de test en stacking (2ª fase).
+\end{itemize}
+
+\subsubsection{Requisitos funcionales}
+
+\begin{itemize}
+	\item[R.F. 1:] Normalizar y segmentar las imágenes.
+	\begin{itemize}
+		\item Datos de entrada: R.D.1
+		\item Datos de salida: R.D.2
+	\end{itemize}
+	\item[R.F. 2:] Extracción de características con wavelets 2D.
+	\begin{itemize}
+		\item Datos de entrada: R.D.2
+		\item Datos de salida: R.D.6
+	\end{itemize}
+	\item[R.F. 3] Selección de características con PCA.
+	\begin{itemize}
+		\item Datos de entrada: R.D.6
+		\item Datos de salida: R.D.7
+	\end{itemize}
+	\item[R.F. 4] Obtención del mejor plano.
+	\begin{itemize}
+		\item Datos de entrada: R.D.7
+		\item Datos de salida: R.D.8
+	\end{itemize}
+	\item[R.F. 5] Obtención de la mejor fuente de información.
+	\begin{itemize}
+		\item Datos de entrada: R.D.7 (vía R.D. 3, 4 y 5)
+		\item Datos de salida: R.D.8
+	\end{itemize}
+	\item[R.F. 6] Optimización de slices.
+	\begin{itemize}
+		\item Datos de entrada: R.D.9
+		\item Datos de salida: R.D.8
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Diagramas}
+\vspace{1.5cm}
+\textbf{ESQUEMA DE CAJA NEGRA}
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.7]{esquema-cajanegra.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Esquema de caja negra} 
+	\label{fig:caja-negra}
+\end{figure}
+\newpage
+\textbf{ESQUEMA F-ARMAZÓN}
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.45]{esquema-f-armazon.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Esquema F-Armazón de los subsistemas} 
+	\label{fig:f-armazon}
+\end{figure}
+
+\vspace{0.1cm}
+\textbf{FLUJO DE DATOS EXPERIMENTO 1}
+
+\vspace{0.5cm}
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.45]{fdexp1.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Esquema de flujo de datos para Experimento 1} 
+	\label{fig:fdexp1}
+\end{figure}
+
+\newpage
+\textbf{FLUJO DE DATOS EXPERIMENTO 2}
+\vspace{0.5cm}
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.45]{fdexp2.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Esquema de flujo de datos para Experimento 2} 
+	\label{fig:fdexp2}
+\end{figure}
+
+\subsection{Implementación}
 
 \newpage
 
