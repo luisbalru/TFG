@@ -1389,8 +1389,30 @@ El sistema de información desarrollado se divide en 5 subsistemas, que son: Sub
 	\label{fig:fdexp2}
 \end{figure}
 
+\vspace{1cm}
+\textbf{FLUJO DE DATOS EXPERIMENTO 3}
+\vspace{0.5cm}
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.45]{fdexp3.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Esquema de flujo de datos para Experimento 3} 
+	\label{fig:fdexp3}
+\end{figure}
+\newpage
+\textbf{FLUJO DE DATOS EXPERIMENTO 4}
+\vspace{0.5cm}
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.45]{fdexp4.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Esquema de flujo de datos para Experimento 4} 
+	\label{fig:fdexp4}
+\end{figure}
+
 \subsection{Implementación}
 
+Este proyecto software tiene licencia GNU General Public License v3.0, y todo su contenido se encuentra en mi repositorio \textit{https://github.com/luisbalru/TFG}. La totalidad de su desarrollo se ha hecho en Python a excepción del subsistema de normalización en el que empleo Matlab, ya que no encontré las herramientas necesarias ni las bibliotecas en Python. Como bibliotecas especiales, cabe destacar SPM12 (\cite{spm}) para la normalización y segmentación, Nibabel para lectura de neuroimágenes, SKlearn en general para todo el tratamiento, pywt para la extracción de características con DWT 2D, TensorFlow y Keras para la parte de Deep Learning. 
 \newpage
 
 \section{Conclusiones y proyectos futuros} 
