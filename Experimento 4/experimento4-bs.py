@@ -126,8 +126,6 @@ for i in range(len(imagenes_pd)):
     paciente = Sujeto(imagenes_pd[i],0)
     pacientes.append(paciente)
 
-pde = len(pacientes)
-print("Enfermos: ",pde)
 imagenes_control = os.listdir('./Datos/Control')
 
 print("Leyendo pacientes control")
@@ -137,56 +135,48 @@ for i in range(len(imagenes_control)):
     paciente = Sujeto(imagenes_control[i],1)
     pacientes.append(paciente)
 
-best_slices = [11, 1, 78, 162, 27, 50, 149, 82, 183, 23]
+best_slices = [58, 145, 79, 64, 105, 180, 54, 30, 12, 117]
 
 for i in best_slices:
     print("Slice ", i)
     dataset = []
     # *_t para pacientes del test y configurar el dataset de la segunda parte
-    dataset_t = []
     target = []
-    target_t = []
-    np.random.shuffle(pacientes)
     np.random.shuffle(pacientes)
     for j in range(len(pacientes)):
         slice = pacientes[j].get_slice(1,i)
         label = pacientes[j].get_label()
-        row = pacientes[j].get_wave2D(slice,'bior3.3',2)
-        dataset.append(row)
+        dataset.append(slice)
         target.append(label)
 
 
 
-scaler = StandardScaler()
-dataset = scaler.fit_transform(dataset)
 X_train, X_test, y_train, y_test = train_test_split(dataset,target,stratify=target,test_size=0.3,random_state=77145416)
-pca = PCA(n_components = 0.95, svd_solver = 'full')
-pca.fit(X_train)
-X_train_pca = pca.transform(X_train)
-pca2 = PCA(n_components = 0.95, svd_solver = 'full')
-pca2.fit(X_test)
-X_test_pca = pca.transform(X_test)
-for score in scores:
-    clf = GridSearchCV(SVC(kernel='rbf',class_weight = 'balanced'),param_grid = param_grid, cv=10,scoring = '%s_macro' % score)
-    clf.fit(X_train,y_train)
-    pred = clf.predict(X_test)
-    print(clf.score(X_test,y_test))
-     # Pintamos la matriz de confusión
-    nombres = ["PD","Control"]
-    plot_confusion_matrix(y_test, pred, classes=nombres,normalize = False,title='Matriz de confusión')
-    plt.show()
+X_train = np.array(X_train)
+X_test = np.array(X_test)
+y_train = np.array(y_train)
+y_test = np.array(y_test)
+X_train = X_train.reshape(len(X_train),157,136,1)
+X_test = X_test.reshape(len(X_test),157,136,1)
+y_train = to_categorical(y_train)
+y_test1 = to_categorical(y_test)
+pred = deep_learning(X_train,y_train,X_test,y_test1)
 
-    # Pintamos la curva ROC
-    print("Área bajo la curva ROC")
-    fpr, tpr, threshold = metrics.roc_curve(y_test,pred)
-    roc_auc = metrics.auc(fpr,tpr)
-    plt.title('Curva ROC')
-    plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)
-    plt.legend(loc = 'lower right')
-    plt.plot([0, 1], [0, 1],'r--')
-    plt.xlim([0, 1])
-    plt.ylim([0, 1])
-    plt.ylabel('True Positive Rate')
-    plt.xlabel('False Positive Rate')
-    plt.show()
-    print(classification_report(y_test,pred,target_names = nombres))
+nombres = ["PD","Control"]
+plot_confusion_matrix(y_test, pred, classes=nombres,normalize = False,title='Matriz de confusión')
+plt.show()
+
+# Pintamos la curva ROC
+print("Área bajo la curva ROC")
+fpr, tpr, threshold = metrics.roc_curve(y_test,pred)
+roc_auc = metrics.auc(fpr,tpr)
+plt.title('Curva ROC')
+plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)
+plt.legend(loc = 'lower right')
+plt.plot([0, 1], [0, 1],'r--')
+plt.xlim([0, 1])
+plt.ylim([0, 1])
+plt.ylabel('True Positive Rate')
+plt.xlabel('False Positive Rate')
+plt.show()
+print(classification_report(y_test,pred,target_names = nombres))
