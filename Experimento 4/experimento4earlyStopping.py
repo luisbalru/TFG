@@ -40,7 +40,7 @@ def deep_learning(X_train,y_train,X_test,y_test):
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
 
-    print(model.summary())
+    #print(model.summary())
     #train model
     model.fit(X_train, y_train,validation_data=(X_test, y_test), epochs=100, callbacks=[EarlyStopping(monitor='val_loss')] )
     pred = model.predict(X_test)
@@ -126,12 +126,10 @@ for i in range(Y_shape):
         dataset_t.append(slice)
 
     dataset_t = np.array(dataset_t)
-    print(dataset_t.shape)
 
     X_train = dataset
     y_train = target
     X_train = np.array(X_train)
-    print(X_train.shape)
     y_train = np.array(y_train)
     X_train = X_train.reshape(169,157,136,1)
     #X_train = X_train.reshape(13,157,136,1)
@@ -144,7 +142,6 @@ for i in range(Y_shape):
     target_final = np.array(target_final)
     target_final = to_categorical(target_final)
     pred = deep_learning(X_train,y_train,dataset_t,target_final)
-    print(pred)
     dataset_final.append(pred)
 
 

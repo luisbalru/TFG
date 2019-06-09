@@ -1285,6 +1285,57 @@ La línea naranja representa las slices donde el accuracy entre C2 y C1 es igual
 La conclusión que extraemos es que ambos tipos de información tienen un comportamiento similar en rendimiento de clasificación. De entre el corte 0 a l 75 parece predominar la materia gris, y hasta el 189 la materia blanca obtiene ventaja. Se puede observar que la materia gris genera el máximo score entorno al corte 85. Además, desde el punto de vista estadístico, no se puede asegurar que una contenga más información relevante que la otra, por lo que optamos por seguir con toda la información del cerebro en los siguientes experimentos, a pesar de el incremento en el coste computacional que supone. 
 \newpage
 \subsection{Experimento 3}
+
+En este experimento, utilizamos 242 (78 del grupo de control y 164 enfermos de PD) imágenes MRI para estudiar qué slices o cortes son las más determinantes a la hora de diagnosticar un paciente con Parkinson. A la luz del experimento 1, utilizamos plano Coronal como base y, por experimento 2, usamos la imagen completa del cerebro.
+
+\subsubsection{Material y metodología}
+
+Hacemos una partición de las imágenes. Por un lado, los pacientes que entran en juego en la primera fase de stacking (pacientes\_training) y, por otro, los que serán evaluados en la segunda fase (pacientes\_test). Todas las imágenes de los sujetos fueron, en primer lugar, segmentadas a través de la rutina de segmentación implementada en SPM12 (\cite{spm}). Tras ello, normalizamos y cambiamos el tamaño de la imagen a los bordes [-78 -112 -60; 78 76 85]. Extraemos características con la transformada discreta Wavelets 2D usando la transformada Bior3.3 hasta nivel 2. A continuación, realizo una normalización estándar de los coeficientes y, después, seleccionamos las características que explican el 95\% de la variabilidad en el conjunto de datos con PCA. Por último, el resultado de PCA fue ejecutado en SVM usando validación cruzada de 10 particiones y un conjunto de entrenamiento del 70\% de los datos. \\
+
+Computamos los coeficientes wavelets 2D para cada slice, recopilamos toda la información en una matriz, generamos un modelos con SVM y el conjunto de training y, a continuación, hacemos una predicción con el conjunto de test, concluyendo la primera fase. Por tanto, hasta este momento, tenemos un nuevo dataset formado por las predicciones (valores 0 o 1) de un conjunto de pacientes de test, en el que en cada fila tenemos un paciente y cada columna corresponde a la predicción que nos ha dado cada slice sobre si el sujeto está enfermo o no (189 columnas). \\
+
+En la segunda fase, dividimos de nuevo ese conjunto de datos final en entrenamiento y test (para evitar sobreaprendizaje) y, sobre la parte de train, aplico una regresión logística con validación cruzada de 10 particiones, para así poder valorar qué columnas (slices) tienen mayor peso a la hora del diagnóstico. Elijo un modelo lineal para poder conseguir una interpretabilidad mayor. Tras evaluar el modelo, conseguimos un accuracy total de 0.7 y, además, extraemos del mismo los pesos de cada slice para así poder ver cuáles son más determinantes.
+
+\subsubsection{Resultados}
+
+A parte del 0.7 en accuracy general, que no es un resultado que dé demasiada confianza, extraemos los 189 coeficientes asociados a los cortes y los parámetros del modelo. Nos centramos en los pesos. Son los siguientes:
+
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.7]{probs-exp3.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Pesos asociados a cada slice en la regresión logística para el diagnóstico. Experimento 3} 
+	\label{fig:probs-exp3}
+\end{figure}
+
+Como se puede observar, la mayoría de ellos son cero. Esto quiere decir que no aportan ninguna información en el diagnóstico (como cabría esperar, dado que, como se explicó en la sección 1, la enfermedad aparece en el mesencéfalo, en unas zonas muy concretas, por lo que un corte cercano a la parte superior de la cabeza no debería darnos información, por ejemplo), unos son positivos y otros negativos. Encontramos en la literatura el argumento de que aquellos coeficientes positivos más grandes son los que más información aportan para clasificar en la clase positiva, en nuestro caso, a los sujetos en el grupo de control. Por el contrario, aquellos coeficientes negativos que tienen mayor valor absoluto dan información al diagnóstico de enfermos. Por tanto, podemos darle una doble información al médico. En principio nos centramos en los coeficientes que dan información sobre el enfermo. Si tomamos los 10 mejores cortes, obtenemos:
+
+$$[11, 1, 78, 162, 27, 50, 149, 82, 183, 23]$$
+
+que se traduce, en una imagen cualquiera de un cerebro con plano Axial y Sagittal, en
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.8]{cortes-PD-exp3.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Cortes más determinantes para Parkinson. Experimento 3} 
+	\label{fig:cortes-PD-exp3}
+\end{figure}
+
+En el caso de los más determinantes para el grupo de control, encontramos 
+
+$$[26, 18, 43, 95, 173, 145, 74, 148, 175, 118]$$
+
+obteniendo la imagen
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.8]{cortes-C-exp3.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Cortes más determinantes para Control. Experimento 3} 
+	\label{fig:cortes-C-exp3}
+\end{figure}
+
+Como no hay estudios médicos hasta la fecha sobre imágenes MRI y Parkinson, no podemos comprobar si los resultados se ajustan a certezas médicas. En \cite{alberto} se utilizan algoritmos genéticos en la optimización y se obtienen slices distintas. 
+
  \newpage
 \subsection{Experimento 4}
 
