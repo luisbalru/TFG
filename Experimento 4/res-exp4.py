@@ -28,12 +28,12 @@ def show_slices(slices):
         axes[i].imshow(slice.T, cmap="gray", origin="lower")
         if i==1:
             for j in range(len(menores)):
-                axes[i].plot([0,150],[mayores[j],mayores[j]],'C3')
+                axes[i].plot([0,150],[menores[j],menores[j]],'C3')
         if i==0:
             for j in range(len(menores)):
-                axes[i].plot([mayores[j],mayores[j]],[0,150],'C3')
+                axes[i].plot([menores[j],menores[j]],[0,150],'C3')
 
-img = nib.load('wSAG_FSPGR_3D_SAG_FSPGR_3D_20130502124054_6.nii')
+img = nib.load('wSAG_FSPGR_3D_SAG_FSPGR_3D_20130503105457_3.nii')
 img_data = img.get_fdata()
 print(img_data.shape)
 
