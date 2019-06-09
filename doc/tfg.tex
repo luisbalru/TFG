@@ -1334,7 +1334,33 @@ obteniendo la imagen
 	\label{fig:cortes-C-exp3}
 \end{figure}
 
-Como no hay estudios médicos hasta la fecha sobre imágenes MRI y Parkinson, no podemos comprobar si los resultados se ajustan a certezas médicas. En \cite{alberto} se utilizan algoritmos genéticos en la optimización y se obtienen slices distintas. 
+Como no hay estudios médicos hasta la fecha sobre imágenes MRI y Parkinson, no podemos comprobar si los resultados se ajustan a certezas médicas. En \cite{alberto} se utilizan algoritmos genéticos en la optimización y se obtienen slices distintas. \\
+\newpage
+\textbf{Clasificación}
+
+Hacemos una nueva clasificación incluyendo únicamente los slices vinculantes encontrados, utilizando el mismo preprocesamiento que antes y con un GridSearch de parámetros para SVM con validación cruzada de 10 particiones y 30\% de datos para el test (se puede encontrar en \textit{experimento3-bs.py}).Los resultados son los siguientes:
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.65]{conf2.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Matriz de confusión para la clasificación con los mejores cortes} 
+	\label{fig:conf-mat-exp3}
+\end{figure}
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.6]{roc2.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Curva ROC para la clasificación con los mejores cortes} 
+	\label{fig:roc-exp3}
+\end{figure}
+
+Resultados para la predicción de Parkinson:
+
+\begin{itemize}
+	\item Precision: 0.73
+	\item Recall: 0.84
+	\item F1-Score: 0.78
+\end{itemize}
 
  \newpage
 \subsection{Experimento 4}
