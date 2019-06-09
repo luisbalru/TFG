@@ -2,6 +2,7 @@ import numpy as np
 from numpy import loadtxt
 
 lines = loadtxt("probs.txt",delimiter=",")
+print(lines)
 mayores = []
 menores = []
 for i in range(0,10):

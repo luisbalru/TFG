@@ -1365,6 +1365,91 @@ Resultados para la predicción de Parkinson:
  \newpage
 \subsection{Experimento 4}
 
+En este experimento, utilizamos 242 (78 del grupo de control y 164 enfermos de PD) imágenes MRI para estudiar qué slices o cortes son las más determinantes a la hora de diagnosticar un paciente con Parkinson. A la luz del experimento 1, utilizamos plano Coronal como base y, por experimento 2, usamos la imagen completa del cerebro.
+
+\subsubsection{Material y metodología}
+
+Volvemos a realizar la misma partición que en el experimento 3. Sin embargo, en esta ocasión no hacemos preprocesamiento alguno, buscando aprovechar las bondades de las redes neuronales profundas. La primera parte de los pacientes, para la fase uno del stacking, será utilizada para entrenar la red. Se genera un modelo por cada slice y se van almacenando las predicciones generadas con los elementos de la segunda fase. Dichas predicciones son evaluadas por la regresión logística con validación cruzada de 10 particiones para valorar los cortes más importantes según sus pesos, tal y como hicimos en el experimento anterior. \\
+
+Antes de presentar los resultados, explico con detalle la topología de la red. Partimos de un modelo con dos capaz convolutivas que trabajan con la imagen completa (\cite{keras}):
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.6]{conf1.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Configuración inicial de la red} 
+	\label{fig:confnn1}
+\end{figure}
+
+
+Dado el número reducido de imágenes del que disponemos, parece excesivo tener más de 1.3 millones de parámetros ajustables por cada slice. A partir de aquí, añado capas de submuestreo (pooling) y una capa adicional densa. Además, reduzco el tamaño de la imagen con una tercera capa convolutiva (seguida de su capa de pooling):
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.6]{confnn2.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Diseño de la red, parte 1} 
+	\label{fig:confnn2}
+\end{figure}
+
+
+
+Aún así, siguen siendo demasiados parámetros para el tamaño del conjunto de datos que tenemos, por lo que reduzco aún más el tamaño de la red reduciendo su número de canales.
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.6]{confnn3.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Diseño de la red, parte 2} 
+	\label{fig:confnn3}
+\end{figure}
+
+
+Fijo el número de épocas a 100. Por si la red no aprendiera lo suficiente en las primeras épocas, introduzco la posibilidad de detener el entrenamiento usando ``early stopping'', de forma que podemos ahorrar gran parte del tiempo de cálculo, ya que resultaría innecesario. 
+
+\subsubsection{Resultados}
+
+Obtenemos un 0.68 de accuracy en la validación cruzada. Estos son los coeficientes obtenidos para los 189 cortes:
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.65]{probs-exp4.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Pesos asociados a cada slice en la regresión logística para el diagnóstico. Experimento 4} 
+	\label{fig:probs-exp4}
+\end{figure}
+
+De nuevo, estudiamos los 10 mejores cortes para el diagnóstico del Parkinson y para el grupo de Control:
+
+$$[58, 145, 79, 64, 105, 180, 54, 30, 12, 117]$$
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.8]{cortes-PD-exp4.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Cortes más determinantes para Parkinson. Experimento 4} 
+	\label{fig:cortes-PD-exp4}
+\end{figure}
+
+Para el grupo de Control,
+
+$$[33, 110, 9, 29, 27, 97, 7, 63, 122, 106]$$
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.8]{cortes-C-exp4.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Cortes más determinantes para Control. Experimento 4} 
+	\label{fig:cortes-C-exp4}
+\end{figure}
+\newpage
+\textbf{CLASIFICACIÓN}
+
+Realizamos una clasificación con el mismo propósito que en el experimento 3 (\textit{experimento4-bs.py}). Sin embargo, los resultados no han sido tan buenos. Basta ver la matriz de confusión para advertir que la red no ha conseguido aprender las características de la enfermedad con claridad:
+
+\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
+	\centering
+	\includegraphics[scale=0.65]{conf-deeplearn1.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\caption{Matriz de confusión para la clasificación con los mejores cortes} 
+	\label{fig:conf-mat-exp4}
+\end{figure}
+
+Como se puede ver, ha etiquetado a todos los elementos del test como si fueran enfermos, lo cuál es grave, ya que tendríamos gran cantidad de falsos positivos. A la luz de los resultados, no parece que deep learning pueda tener un buen rendimiento en un problema con tan pocos datos.
+
 \newpage
 
 \section{Desarrollo del proyecto software}
