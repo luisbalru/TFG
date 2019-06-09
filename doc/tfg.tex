@@ -14,7 +14,7 @@
 	\normalfont \normalsize 
 	\textsc{\textbf{Aprendizaje Automático (2019)} \\ Doble Grado en Ingeniería Informática y Matemáticas \\ Universidad de Granada} \\ [25pt] % Your university, school and/or department name(s)
 	\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
-	\huge TFG \\ % The assignment title
+	\huge Borrador TFG \\ % The assignment title
 	\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
 }
 
@@ -73,6 +73,10 @@ En la realización del proyecto utilizamos diferentes algoritmos y métodos, inc
 	\item En el segundo experimento, elegido ya el plano correspondiente, comparo el rendimiento de la materia gris, materia blanca y el materia completa para ahorrar costes y mejorar la clasificación.
 	
 	\item Para la extracción de características, utilizo la transformada discreta Wavelet en 2D.
+	
+	\item El tercer experimento consistirá en una optimización basada en stacking (SVM+Regresión logística) para determinar los mejores cortes del plano elegido.
+	
+	\item Por último, introducimos deep learning en la detección de la enfermedad del Parkinson para intentar encontrar los mejores cortes.
 	
 \end{itemize}
 
@@ -1303,7 +1307,7 @@ A parte del 0.7 en accuracy general, que no es un resultado que dé demasiada co
 
 \begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
 	\centering
-	\includegraphics[scale=0.7]{probs-exp3.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
+	\includegraphics[scale=0.65]{probs-exp3.png}  %el parámetro scale permite agrandar o achicar la imagen. En el nombre de archivo puede especificar directorios
 	\caption{Pesos asociados a cada slice en la regresión logística para el diagnóstico. Experimento 3} 
 	\label{fig:probs-exp3}
 \end{figure}
@@ -1583,7 +1587,7 @@ Este proyecto software tiene licencia GNU General Public License v3.0, y todo su
 
 El sistema de ayuda al diagnóstico del Parkison desarrollado ha constado de cuatro experimentos destinados al incremento paulatino de nuestro conocimiento sobre la enfermedad y el funcionamiento del cerebro. El primero de ellos estaba destinado a, de entre los tres cortes posibles que podemos hacer para obtener una imagen de dos dimensiones (axial, coronal y sagittal), cuál es más representativa. Nuestro resultado fue contundente: el plano coronal es el más informativo de todos ellos para esta demencia. El siguiente, que tenía propósito de ahorrar coste computacional, consistía en decidir si podíamos prescindir de una parte de la imagen completa del cerebro, quedándonos con la materia gris (C1) o la materia blanca (C2). Los resultados no fueron concluyentes, por lo que optamos por tomar siempre la imagen completa, a fin de garantizar la información más rica y los resultados más interesantes posibles. El tercer experimento tenía como objetivo primordial darle respuesta a la pregunta de qué corte, de los 189 que genera el plano coronal, contiene mayor información de interés en el diagnóstico de la enfermedad del Parkinson. Como es obvio, esta es nuestra pregunta central y el objeto de todo nuestro estudio. En la sección de experimentos se detallan los resultados, pero se puede decir que nuestro sistema es capaz de seleccionar las 10 slices más importantes y detecta a pacientes enfermos con una precisión del 73\% y un recall del 84\%. El experimento 4 estaba dedicado a la optimización vía deep learning de nuestro sistema. A pesar de que los resultados no han sido buenos, el diseño de la red ha sido enriquecedor y construye una nueva vía para el desarrollo de la biomedicina y el diagnóstico de enfemedades neurodegenerativas. 
 
-\subsubsection{Proyectos futuros}
+\subsection{Proyectos futuros}
 
 Existen trabajos pioneros (\cite{irojas}) que tratan de diagnosticar enfermedades neurodegenerativas trabajando con imágenes completas en 3D y no por cortes. La extensión de este trabajo de software libre a ese terreno sería un proyecto futuro muy interesante y viable, haciendo así herramientas abiertas para toda la comunidad. Además, deberíamos plantearnos utilizar otro tipo de imágenes, ya que expertos en imagen y radiología me advirtieron que MRI no era la mejor fuente de información para el diagnóstico de esta enfermedad. El traslado de estas técnicas a imágenes más potentes puede darnos un salto de calidad y verosimilitud que por fin consiga convencer a los médicos de la importancia de estas herramientas. Nunca fue nuestro propósito hacer de médicos ni acallar su criterio, si no darles una alternativa en casos de duda. \\
 
