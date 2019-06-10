@@ -1,10 +1,56 @@
 \input{preambuloSimple.tex}
 \graphicspath{ {./images/} }
 \usepackage{subcaption}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{soul}
 \usepackage{amssymb}
+\usepackage{listings}
+\usepackage[usenames]{color}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[utf8]{inputenc}
+\lstset{language=Python}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
 
+\lstset{frame=tb,
+	language=Python,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=none,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{blue},
+	commentstyle=\color{dkgreen},
+	stringstyle=\color{mauve},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3
+}
+
+\lstset{language=Matlab}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+	language=Matlab,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=none,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{blue},
+	commentstyle=\color{dkgreen},
+	stringstyle=\color{mauve},
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=3
+}
 
 %----------------------------------------------------------------------------------------
 %	TÍTULO Y DATOS DEL ALUMNO
@@ -87,7 +133,7 @@ En la realización del proyecto utilizamos diferentes algoritmos y métodos, inc
 
 \textit{Parkinson's Foundation} (\cite{pf}) describe el Parkison como sigue: \\
 
-`` El Parkinson es un desorden neurodegenerativo que causa la muerte de las neuronas dopaminérgicas (neurotrasmisores que producen y secretan dopamina) de un área concreta del cerebro llamada \textit{substantia nigra pars compacta (SNpc)}.''
+`` El Parkinson es un desorden neurodegenerativo que causa la muerte de las neuronas dopaminérgicas (neurotransmisores que producen y secretan dopamina) de un área concreta del cerebro llamada \textit{substantia nigra pars compacta (SNpc)}.''
 
 Esta estructura se encuentra localizada en el mesencéfalo y debe su color y su nombre ala presencia de un pigmento llamado neuromelanina que se encuentra dentro de las neuronas que lo forman. 
 
@@ -129,7 +175,7 @@ Cabe destacar que en las neuronas supervivientes, a nivel microscópico se obser
 
 \subsection{Corteza cerebral y ganglio basal}
 
-La primera capa que nos encontramos al explorar el cerebro humano es la materia dura, esto es, una membrana que envuelve al cerebro, siendo la última capa de las meninges, cubriendo y por tanto protegiendo el cerebro y la médula espinal. Bajo esta membrana encontramos el cortex, formado por millones de neuronas de un color gris claro (la materia gris) organizadas en seis capas de entre dos y cuatro milímetros de grosor. La corteza cerebral juega un papel trascendental en la conciencia, el pensamiento, el lenguaje, la memoria, la percepción y la atención. La materia gris es una componete muy importante de nuestro sistema nervioso central. Por otra parte, la matria blanca está formada por axones que interconectan las neuronas en diferentes regiones de la corteza y del sistema nervioso central. \\
+La primera capa que nos encontramos al explorar el cerebro humano es la materia dura, esto es, una membrana que envuelve al cerebro, siendo la última capa de las meninges, cubriendo y por tanto protegiendo el cerebro y la médula espinal. Bajo esta membrana encontramos el cortex, formado por millones de neuronas de un color gris claro (la materia gris) organizadas en seis capas de entre dos y cuatro milímetros de grosor. La corteza cerebral juega un papel trascendental en la conciencia, el pensamiento, el lenguaje, la memoria, la percepción y la atención. La materia gris es una componente muy importante de nuestro sistema nervioso central. Por otra parte, la materia blanca está formada por axones que interconectan las neuronas en diferentes regiones de la corteza y del sistema nervioso central. \\
 
 La corteza cerebral se divide en cuatro lóbulos: \\
 
@@ -137,7 +183,7 @@ La corteza cerebral se divide en cuatro lóbulos: \\
 	\item Lóbulo temporal: Clave en la percepción auditiva, comprensión del lenguaje, memoria y aprendizaje. Contiene el hipocampo.
 	\item Lóbulo frontal: Corteza motora primaria, contiene también la mayoría de las neuronas dopaminérgicas en el cortex.
 	\item Lóbulo pariental: esencial para la visión espacial, la navegación y el sentido del tacto.
-	\item Lóbulo occipital: Cortex viaul primario, responsable de la creación de los sueños.
+	\item Lóbulo occipital: Cortex visual primario, responsable de la creación de los sueños.
 \end{itemize}
 
 \begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
@@ -207,7 +253,7 @@ NMR es un fenómeno físico basado en las propiedades cuántico-mecánicas del n
 
 Como se muestra en la Figura 3.1, la suma de los momentos magnéticos de un grupo de núcleos de hidrógeno puede ser representado como un vector M paralelo al campo magnético externo $B_0$, donde las componentes normales de los diferentes \textit{spin} se cancelan mutuamente. La mayoría de los \textit{spin} adoptan la orientación paralela, por lo que la suma de los \textit{spins} de M es paralela a $B_0$. \\
 
-M puede ser manipulado usando señales de radio frecuencia. Cuando se aplican, los núcleos absorben la energía y una porción de ella se emite más tarde. Esa es la señal que se detecta. Dependiendo de la intensidad de los campos magnéticos, se pueden obtener imagénes con distintas resoluciones.
+M puede ser manipulado usando señales de radio frecuencia. Cuando se aplican, los núcleos absorben la energía y una porción de ella se emite más tarde. Esa es la señal que se detecta. Dependiendo de la intensidad de los campos magnéticos, se pueden obtener imágenes con distintas resoluciones.
 
  \begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
  	\centering
@@ -220,7 +266,7 @@ M puede ser manipulado usando señales de radio frecuencia. Cuando se aplican, l
 
 A pesar de no ser una herramienta matemática, no puedo pasar sin mencionar, y al mismo tiempo agradecer, a \textit{Parkinson's Progression Makers Initiative} (PPMI). PPMI es un estudio clínico de gran importancia que evalúa las zonas cerebrales de interés usando técnicas avanzadas de imagen, muestreos biológicos y comportamientos y ensayos clínicos para identificar biomarcadores de la enfermedad del Parkinson. PPMI se lleva a cabo en Estados Unidos, Europa, Israel y Australia y, en nuestro caso, evaluó el proyecto para cedernos el acceso a su base de datos (adni.loni.usc.edu), adscrita a la Universidad Sur de California. \\
 
-Descargamos más de 300 imagénes 3D cerebrales en formato DICOM. DICOM es el acrónimo de \textit{Digital Imaging and Communications in Medicine}. Es, al mismo tiempo, un protocolo de comunicación y un formato de archivo, lo que significa que almacena información médica, como imágenes MRI, junto con la información personal del paciente. El formato garantiza que todos esos datos se mantienen juntos, haciendo posible la transferencia de los mismos entre los profesionales. Tras eliminar archivos corruptos y duplicados, obtuvimos un dataset de 242 imágenes (78 pacientes en el grupo de control y 164 enfermos de Parkinson). 
+Descargamos más de 300 imágenes 3D cerebrales en formato DICOM. DICOM es el acrónimo de \textit{Digital Imaging and Communications in Medicine}. Es, al mismo tiempo, un protocolo de comunicación y un formato de archivo, lo que significa que almacena información médica, como imágenes MRI, junto con la información personal del paciente. El formato garantiza que todos esos datos se mantienen juntos, haciendo posible la transferencia de los mismos entre los profesionales. Tras eliminar archivos corruptos y duplicados, obtuvimos un dataset de 242 imágenes (78 pacientes en el grupo de control y 164 enfermos de Parkinson). 
 
 
 \subsection{Normalización}
@@ -568,7 +614,7 @@ La condición de admisibilidad dice que, alrededor de cero, la transformada de F
 
 $$u(x) = \int_{\mathbb{R}} \int_{\mathbb{R}^+} L_\psi u(a,b) \frac{1}{\sqrt{a}} \psi\left(\frac{x-b}{a}\right) \frac{da db}{a^2}$$
 
-\textbf{Desmotración.} Calculamos el adjunto de la transformada Wavelet. Para $u \in L^2(\mathbb{R})$, y $F \in L^2 \left( [0,\infty[ \times \mathbb{R}, \frac{da db}{a^2}\right)$,
+\textbf{Demostración.} Calculamos el adjunto de la transformada Wavelet. Para $u \in L^2(\mathbb{R})$, y $F \in L^2 \left( [0,\infty[ \times \mathbb{R}, \frac{da db}{a^2}\right)$,
 
 $$(L_\psi u, F)_{L^2 \left( [0,\infty[ \times \mathbb{R}, \frac{da db}{a^2}\right)} = \int_{\mathbb{R}} \int_{\mathbb{R}^+} \int_{\mathbb{R}} u(x) \frac{1}{\sqrt{a}} \psi\left(\frac{x-b}{a}\right)dx F(a,b) \frac{da db}{a^2}$$
 $$ = \int_{\mathbb{R}} u(x) \int_{\mathbb{R}} \int_{\mathbb{R}^+} F(a,b) \frac{1}{\sqrt{a}} \psi\left(\frac{x-b}{a}\right) \frac{da db}{a^2}dx $$
@@ -720,7 +766,7 @@ podemos expresar
 
 $$V_{j-1}^2 = V_j^2 \oplus H_j^2 \oplus S_j^2 \oplus D_j^2$$
 
-Denotando la functión de escala de $(V_j)$ como $\phi$ y la correspondiente wavelet como $\psi$, definimos tres funciones:
+Denotando la función de escala de $(V_j)$ como $\phi$ y la correspondiente wavelet como $\psi$, definimos tres funciones:
 
 $$\psi^1(x_1,x_2) = \phi(x_1) \psi(x_2), \hspace{0.2cm} \psi^2(x_1,x_2) = \psi(x_1) \phi(x_2), \hspace{0.2cm} \psi^3(x_1,x_2) = \psi(x_1) \psi(x_2)$$
 
@@ -839,7 +885,7 @@ Desarrollo ahora el contenido matemático de Análisis de Componentes Principale
 	
 	Los elementos de $Y$ son las llamadas componentes principales de $X$. Dado que una matriz ortogonal es invertible, tenemos que $X = OY$. Esto expresa una variable aleatoria cualquiera como una combinación lineal de variables aleatorias independientes. Este proceso de  hacer la descomposición espectral de la matriz de covarianzas de X es el llamado Análisis de Componentes Principales.
 	
-	PCA se usa como método de reduccion de dimensionalidad. Si tomamos unos pocos componentes principales, obtenemos una explicación simple de la estructura de $X$ a través de unas pocas variables.Deben ordenarse las componentes de $Y$ poniendo en primer lugar las componentes más grandes (los mayores valores propios). Por último, tratamos la varianza explicada. Sea $\Vert · \Vert$ la norma Euclidea de un vector, por lo que
+	PCA se usa como método de reducción de dimensionalidad. Si tomamos unos pocos componentes principales, obtenemos una explicación simple de la estructura de $X$ a través de unas pocas variables.Deben ordenarse las componentes de $Y$ poniendo en primer lugar las componentes más grandes (los mayores valores propios). Por último, tratamos la varianza explicada. Sea $\Vert · \Vert$ la norma Euclídea de un vector, por lo que
 	
 	$$ \Vert Y \Vert^2 = Y^T Y = \sum_{i} Y_i^2$$
 	
@@ -866,7 +912,7 @@ En nuestro proyecto, utilizamos siempre PCA con una varianza explicada del 95\%.
 \newpage
 \subsection{Clasificación}
 
-En esta sección expongo los distintos algoritmos que hemos usado para clasificar a los sujetos según las imágenes MRI. El primero de ellos será SVM. Más tarde, nos enfrentaremos a la necesidad de ajustar los hiperparámetros del modelo optimizando así los resultados. De igual manera, nos enfrentaremos al problema del sobreajuste, que solucionamos con Validación Cruzada de 10 particiones. Será necesaria también la mención de las redes neuronales profundas y, finalmente, la regresión logística.
+En esta sección expongo los distintos algoritmos que hemos usado para clasificar a los sujetos según las imágenes MRI. El primero de ellos será SVM. Más tarde, nos enfrentaremos a la necesidad de ajustar los hiperparámetros del modelo optimizando así los resultados. De igual manera, nos enfrentaremos al problema del sobre ajuste, que solucionamos con Validación Cruzada de 10 particiones. Será necesaria también la mención de las redes neuronales profundas y, finalmente, la regresión logística.
 
 \subsubsection{SVM}
 
@@ -996,7 +1042,7 @@ Validación cruzada es una técnica de validación de modelos que determina la r
 
 \subsubsection{Ajuste de hiperparámetros y GridSearch}
 
-Mientras ejecutamos la validación cruzada de 10 particiones intentamos encontrar los mejores parámetros $C$ y $\gamma$ a través de un grid search. Grid Search es una técnica utilizada para la optimización de hiperparámetros, asegurando así que los modelos no sobreajustan. Este proceso consiste en una búsqueda exhaustiva en un rango definido para la pareja $(C,\gamma)$. Aquella pareja que consiga el mayor \textit{recall} (\textit{accuracy} no es la mejor medida en biomedicina, puesto que lo que queremos evitar son los falsos negativos) es seleccionada para el training. Los rangos de valores son los siguientes:
+Mientras ejecutamos la validación cruzada de 10 particiones intentamos encontrar los mejores parámetros $C$ y $\gamma$ a través de un grid search. Grid Search es una técnica utilizada para la optimización de hiperparámetros, asegurando así que los modelos no sobre ajustan. Este proceso consiste en una búsqueda exhaustiva en un rango definido para la pareja $(C,\gamma)$. Aquella pareja que consiga el mayor \textit{recall} (\textit{accuracy} no es la mejor medida en biomedicina, puesto que lo que queremos evitar son los falsos negativos) es seleccionada para el training. Los rangos de valores son los siguientes:
 \begin{itemize}
 	\item $C = \{2^{i},i=-2,\dots,11\} $
 	\item $\gamma = \{2^{i}, i =-9,\dots,3\}$
@@ -1034,7 +1080,7 @@ $$\log \frac{P(G=1| X =x)}{P(G=K|X=x} =  \beta_{10} + \beta_1^Tx$$
   
   $$\frac{\partial l(\beta)}{\partial \beta} = \sum_{i=1}^{N} x_i (y_i -p(x_i;\beta))=0$$
   
-  siendo $p+1$ ecuaciones no lineales en $\beta$.  Para resolverlas utilizamos el algortimo de Newton-Raphson, que requiere el cálculo de la matriz Hessiana
+  siendo $p+1$ ecuaciones no lineales en $\beta$.  Para resolverlas utilizamos el algoritmo de Newton-Raphson, que requiere el cálculo de la matriz Hessiana
   
   $$\frac{\partial^2 l(\beta)}{\partial \beta \partial \beta^T} = - \sum_{i=1}^{N} x_i x_i^T p(x_i;\beta)(1-p(x_i;\beta))$$
   
@@ -1057,7 +1103,7 @@ $$\log \frac{P(G=1| X =x)}{P(G=K|X=x} =  \beta_{10} + \beta_1^Tx$$
   
 \subsubsection{Optimización: En busca de los mejores cortes}
 
-Una vez explicadas las principales herramientas dentro de la clasificación, es momento de conectarlas y darles sentido. Nuestro objetivo es encontrar aquellos cortes (\textit{slices}) que nos dan la información más veraz a la hora de diagnosticar la enfermedad del Parkinson. En trabajos anteriores como  \cite{irojas} o \cite{alberto}  se utilizó un algoritmo genético como optimización (NSGA-II). Yo propongo una alternativa que considero más eficiente desde un punto de vista computacional. Mi idea nace en el seno de los llamados \textit{ensemble learners}. En particular, utilizo \textit{stacking} de la siguiente manera. En una primera fase, utilizando solamente los 189 cortes del plano Coronal (se explicará en la siguiente sección por qué) genero 189 clasificadores, uno por slice, de manera que cada  paciente pasa por todos ellos (en su slice correspondiente, especializándose en ella), aprende las características propias de las mismas y genera una predicción sobre el conjunto de test. Así, cuando se han completado los 189 procesos, contamos con un dataset nuevo repleto de las predicciones generadas por los modelos, de forma que cada fila es un paciente y cada columna un slice (por lo que la dimensión es $Num\_pacientes \times 189$). Aquí interviene la segunda parte del \textit{stacking}, en la que empleo un modelo lineal (regresión logística) para calcular los pesos de cada slice, viendo cuál es la que tiene más transcendencia a la hora de clasificar un paciente como enfermo o sano. En cada una de las fases, separo los datos en train y test, llevando a cabo una validación cruzada. 
+Una vez explicadas las principales herramientas dentro de la clasificación, es momento de conectarlas y darles sentido. Nuestro objetivo es encontrar aquellos cortes (\textit{slices}) que nos dan la información más veraz a la hora de diagnosticar la enfermedad del Parkinson. En trabajos anteriores como  \cite{irojas} o \cite{alberto}  se utilizó un algoritmo genético como optimización (NSGA-II). Yo propongo una alternativa que considero más eficiente desde un punto de vista computacional. Mi idea nace en el seno de los llamados \textit{ensemble learner}. En particular, utilizo \textit{stacking} de la siguiente manera. En una primera fase, utilizando solamente los 189 cortes del plano Coronal (se explicará en la siguiente sección por qué) genero 189 clasificadores, uno por slice, de manera que cada  paciente pasa por todos ellos (en su slice correspondiente, especializándose en ella), aprende las características propias de las mismas y genera una predicción sobre el conjunto de test. Así, cuando se han completado los 189 procesos, contamos con un dataset nuevo repleto de las predicciones generadas por los modelos, de forma que cada fila es un paciente y cada columna un slice (por lo que la dimensión es $Num\_pacientes \times 189$). Aquí interviene la segunda parte del \textit{stacking}, en la que empleo un modelo lineal (regresión logística) para calcular los pesos de cada slice, viendo cuál es la que tiene más transcendencia a la hora de clasificar un paciente como enfermo o sano. En cada una de las fases, separo los datos en train y test, llevando a cabo una validación cruzada. 
 
 \begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
 	\centering
@@ -1073,7 +1119,7 @@ Antes de describir con detalle la herramienta de deep learning que he utilizado,
 \begin{itemize}
 	\item \textbf{REDES NEURONALES}
 	
-	Una Red Neuronal es un sistema computacional que trata de imitar o aproximar la sinápsis que se produce entre las neuronas del cerebro humano. Matemáticamente hablando, podemos decir que estos sistemas tratan de aproximar funciones dados unos inputs (de hecho, son aproximadores universales). Estas redes, al igual que un cerebro humano, están compuestas por neuronas. Cada neurona posee un peso, una función de activación y está conectada con otro conjunto de neuronas:
+	Una Red Neuronal es un sistema computacional que trata de imitar o aproximar la sinapsis que se produce entre las neuronas del cerebro humano. Matemáticamente hablando, podemos decir que estos sistemas tratan de aproximar funciones dados unos input (de hecho, son aproximadores universales). Estas redes, al igual que un cerebro humano, están compuestas por neuronas. Cada neurona posee un peso, una función de activación y está conectada con otro conjunto de neuronas:
 	
 	\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
 		\centering
@@ -1095,7 +1141,7 @@ Antes de describir con detalle la herramienta de deep learning que he utilizado,
 	Como ejemplos de funciones de activación, presento las más significativas (\cite{miriam}):
 	
 	\begin{enumerate}
-		\item Función sigmoide $\sigma$, descrita por la curva $\sigma(x) = \frac{1}{1+e^{-x}}$, produciendo valores en el intervalo [0,1]. Son útiles para la última capa de la red para clasificaciones multietiqueta.
+		\item Función sigmoide $\sigma$, descrita por la curva $\sigma(x) = \frac{1}{1+e^{-x}}$, produciendo valores en el intervalo [0,1]. Son útiles para la última capa de la red para clasificaciones multi etiqueta.
 		\item Función ReLu (\textit{Rectified Linear Unit}) cuya curva es $f(x) = max(0,x)$.
 		\item Función \textit{Softmax}.  Normalmente interpretada como una distribución de probabilidad, tiene la siguiente expresión $\sigma(x)_i = \frac{e^{x_i}}{\sum_{k=1}^{K} e^{x_k}}$
 			\end{enumerate}
@@ -1111,11 +1157,11 @@ Antes de describir con detalle la herramienta de deep learning que he utilizado,
 
 
 \item \textbf{CNN} \\ \\
-Una vez terminada la breve introducción sobre redes neuronales, nos introducimos en las redes neuronales convolutivas. Las redes convolutivas son las redes neuronales artificales que se utilizan habitualmente para resolver múltiples problemas prácticos que requieren procesar imágenes. Por ejemplo, cuando la cámara frontal de un vehículo autónomo capta una señal de tráfico, debe identificar de qué señal concreta se trata. También puede interesarnos detectar qué tipo de objetos parecen en la imagen correspondiente a una escena y localizarlos dentro de la imagen (detección). Incluso podemos utilizar redes convolutivas como parte de un sistema que genera una descripción textual del contenido de una imagen, con lo que podemos indexar imágenes para realizar búsquedas por contenido en bases de datos de imágenes o sintetizar una señal de voz a partir de la descripción textual para usuarios invidentes. \\
+Una vez terminada la breve introducción sobre redes neuronales, nos introducimos en las redes neuronales convolutivas. Las redes convolutivas son las redes neuronales artificiales que se utilizan habitualmente para resolver múltiples problemas prácticos que requieren procesar imágenes. Por ejemplo, cuando la cámara frontal de un vehículo autónomo capta una señal de tráfico, debe identificar de qué señal concreta se trata. También puede interesarnos detectar qué tipo de objetos parecen en la imagen correspondiente a una escena y localizarlos dentro de la imagen (detección). Incluso podemos utilizar redes convolutivas como parte de un sistema que genera una descripción textual del contenido de una imagen, con lo que podemos indexar imágenes para realizar búsquedas por contenido en bases de datos de imágenes o sintetizar una señal de voz a partir de la descripción textual para usuarios invidentes. \\
 
-¿En qué se diferencian las redes convolutivas de las redes multicapa presentadas antes? Principalmente, en que tanto sus entradas como sus salidas pueden ser estructuradas. Las redes convolutivas nos permitirán aprovechar dicha estructura para diseñar arquitecturas especializadas que resuelvan de un modo más eficiente problemas que trabajen con tipos particulares de señales. \\
+¿En qué se diferencian las redes convolutivas de las redes multi capa presentadas antes? Principalmente, en que tanto sus entradas como sus salidas pueden ser estructuradas. Las redes convolutivas nos permitirán aprovechar dicha estructura para diseñar arquitecturas especializadas que resuelvan de un modo más eficiente problemas que trabajen con tipos particulares de señales. \\
 
-En lugar de recibir un vector de entradas correspondientes a diferentes variables, recibiremos como entrada un vector, matriz o tensor en el que podemos explotar la relación física existente entre las diferentes entradas. EN el caso de señales unidimensionales, puede tratarse de una señal de audio en el que entradas adyacentes corresponden a muestras consecutivas en el tiempo. En el caso de señales bidimensionales, las entradas pueden corresponder a los píxeles de una imagen. También podemos tener señales bidimensionales de audio, como las provenientes de un array de micrófonos. En ocsaiones, las señales de entrada puede que tengan más de dos dimensiones, como las imágenes en color, los datos volumétricos de imágenes médicas o un simple vídeo. \\
+En lugar de recibir un vector de entradas correspondientes a diferentes variables, recibiremos como entrada un vector, matriz o tensor en el que podemos explotar la relación física existente entre las diferentes entradas. EN el caso de señales unidimensionales, puede tratarse de una señal de audio en el que entradas adyacentes corresponden a muestras consecutivas en el tiempo. En el caso de señales bidimensionales, las entradas pueden corresponder a los píxeles de una imagen. También podemos tener señales bidimensionales de audio, como las provenientes de un array de micrófonos. En ocasiones, las señales de entrada puede que tengan más de dos dimensiones, como las imágenes en color, los datos volumétricos de imágenes médicas o un simple vídeo. \\
 
 La salida de una red convolutiva puede ser convencional, para resolver problemas de clasificación usando una capa softmax (nuestro caso) o problemas de regresión. No obstante, habrá situaciones en las que su salida también reflejará la estructura de problemas que pretendemos resolver. Si trabajamos con imágenes, podemos construir una red convolutiva cuya salida también sea una imagen (\cite{berzal}). \\ \\
 
@@ -1130,7 +1176,7 @@ Situémonos en nuestro caso. Nuestras imágenes tienen unas dimensiones de 157x1
 	
 	\item Capas \textit{Pooling} \\
 	
-	Debido a que la información generada por los mapas de características es ingente, es necesario resumirlos en una matriz que contenga la información más relevante. A este proceso se le llama Pooling. Cada neurona extraerá solamente el valor máximo o el valor medio de cada ventana (según el algoritmo) ignorando el resto. Así pues, el objetivo final de estas capas es reducir el número de pesos, evitando el sobreaprendizaje. \cite{miriam}
+	Debido a que la información generada por los mapas de características es ingente, es necesario resumirlos en una matriz que contenga la información más relevante. A este proceso se le llama Pooling. Cada neurona extraerá solamente el valor máximo o el valor medio de cada ventana (según el algoritmo) ignorando el resto. Así pues, el objetivo final de estas capas es reducir el número de pesos, evitando el sobre aprendizaje. \cite{miriam}
 	
 		\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
 		\centering
@@ -1149,7 +1195,7 @@ Situémonos en nuestro caso. Nuestras imágenes tienen unas dimensiones de 157x1
 \newpage	
 	\item Capas \textit{Dropout} \\
 	
-	Una nueva medida para evitar el sobreajuste. Se ``desconectan'' neuronas de forma aleatoria (llevar a cero un conjunto aleatorio de activaciones). 
+	Una nueva medida para evitar el sobre ajuste. Se ``desconectan'' neuronas de forma aleatoria (llevar a cero un conjunto aleatorio de activaciones). 
 						
 		\begin{figure}[H] %con el [H] le obligamos a situar aquí la figura
 		\centering
@@ -1189,7 +1235,7 @@ Usamos 100 pacientes en este experimento, 45 en el grupo de control y 55 enfermo
 
 Las imágenes de los sujetos fueron, en primer lugar, segmentadas a través de la rutina de segmentación implementada en SPM12 (\cite{spm}). Tras ello, normalizamos y cambiamos el tamaño de la imagen a los bordes [-78 -112 -60; 78 76 85]. Extraemos características con la transformada discreta Wavelets 2D usando la transformada Bior3.3 hasta nivel 2. Tras ello, seleccionamos las características que explican el 95\% de la variabilidad en el conjunto de datos con PCA. Por último, el resultado de PCA fue ejecutado en SVM usando validación cruzada de 10 particiones y un conjunto de entrenamiento del 70\% de los datos. \\
 
-Computamos los coeficientes wavelets 2D para cada slice y para cada paciente y llevamos a cabo la clasificación. Cada vez que entrenamos un SVM se realiza una permutación aleatoria de los pacientes para evitar el sesgo, de forma que el modelo no sobreajusta, y realizamos 10 clasificaciones cada vez, quedándonos con la media de los resultados por cada slice. \\
+Computamos los coeficientes wavelets 2D para cada slice y para cada paciente y llevamos a cabo la clasificación. Cada vez que entrenamos un SVM se realiza una permutación aleatoria de los pacientes para evitar el sesgo, de forma que el modelo no sobre ajusta, y realizamos 10 clasificaciones cada vez, quedándonos con la media de los resultados por cada slice. \\
 
 Este proceso se lleva a cabo en cada uno de los planos de la imagen MRI: X,Y y Z. A continuación, presentamos los resultados.
 
@@ -1242,7 +1288,7 @@ En este experimento, utilizamos 165 (65 del grupo de control y 100 enfermos de P
 
 Las imágenes de los sujetos fueron, en primer lugar, segmentadas a través de la rutina de segmentación implementada en SPM12 (\cite{spm}). Tras ello, normalizamos y cambiamos el tamaño de la imagen a los bordes [-78 -112 -60; 78 76 85]. Extraemos características con la transformada discreta Wavelets 2D usando la transformada Bior3.3 hasta nivel 2. Tras ello, seleccionamos las características que explican el 95\% de la variabilidad en el conjunto de datos con PCA. Por último, el resultado de PCA fue ejecutado en SVM usando validación cruzada de 10 particiones y un conjunto de entrenamiento del 70\% de los datos. \\
 
-Computamos los coeficientes wavelets 2D para cada slice y para cada paciente y llevamos a cabo la clasificación. Cada vez que entrenamos un SVM se realiza una permutación aleatoria de los pacientes para evitar el sesgo, de forma que el modelo no sobreajusta, y realizamos 10 clasificaciones cada vez, quedándonos con la media de los resultados por cada slice. \\
+Computamos los coeficientes wavelets 2D para cada slice y para cada paciente y llevamos a cabo la clasificación. Cada vez que entrenamos un SVM se realiza una permutación aleatoria de los pacientes para evitar el sesgo, de forma que el modelo no sobre ajusta, y realizamos 10 clasificaciones cada vez, quedándonos con la media de los resultados por cada slice. \\
 
 Llevamos a cabo este proceso para C1 (materia gris), C2 (materia blanca) y C1+C2 de las imágenes. 
 
@@ -1298,7 +1344,7 @@ Hacemos una partición de las imágenes. Por un lado, los pacientes que entran e
 
 Computamos los coeficientes wavelets 2D para cada slice, recopilamos toda la información en una matriz, generamos un modelos con SVM y el conjunto de training y, a continuación, hacemos una predicción con el conjunto de test, concluyendo la primera fase. Por tanto, hasta este momento, tenemos un nuevo dataset formado por las predicciones (valores 0 o 1) de un conjunto de pacientes de test, en el que en cada fila tenemos un paciente y cada columna corresponde a la predicción que nos ha dado cada slice sobre si el sujeto está enfermo o no (189 columnas). \\
 
-En la segunda fase, dividimos de nuevo ese conjunto de datos final en entrenamiento y test (para evitar sobreaprendizaje) y, sobre la parte de train, aplico una regresión logística con validación cruzada de 10 particiones, para así poder valorar qué columnas (slices) tienen mayor peso a la hora del diagnóstico. Elijo un modelo lineal para poder conseguir una interpretabilidad mayor. Tras evaluar el modelo, conseguimos un accuracy total de 0.7 y, además, extraemos del mismo los pesos de cada slice para así poder ver cuáles son más determinantes.
+En la segunda fase, dividimos de nuevo ese conjunto de datos final en entrenamiento y test (para evitar sobre aprendizaje) y, sobre la parte de train, aplico una regresión logística con validación cruzada de 10 particiones, para así poder valorar qué columnas (slices) tienen mayor peso a la hora del diagnóstico. Elijo un modelo lineal para poder conseguir una interpretabilidad mayor. Tras evaluar el modelo, conseguimos un accuracy total de 0.7 y, además, extraemos del mismo los pesos de cada slice para así poder ver cuáles son más determinantes.
 
 \subsubsection{Resultados}
 
@@ -1585,7 +1631,7 @@ Este proyecto software tiene licencia GNU General Public License v3.0, y todo su
 
 \subsection{Conclusiones}
 
-El sistema de ayuda al diagnóstico del Parkison desarrollado ha constado de cuatro experimentos destinados al incremento paulatino de nuestro conocimiento sobre la enfermedad y el funcionamiento del cerebro. El primero de ellos estaba destinado a, de entre los tres cortes posibles que podemos hacer para obtener una imagen de dos dimensiones (axial, coronal y sagittal), cuál es más representativa. Nuestro resultado fue contundente: el plano coronal es el más informativo de todos ellos para esta demencia. El siguiente, que tenía propósito de ahorrar coste computacional, consistía en decidir si podíamos prescindir de una parte de la imagen completa del cerebro, quedándonos con la materia gris (C1) o la materia blanca (C2). Los resultados no fueron concluyentes, por lo que optamos por tomar siempre la imagen completa, a fin de garantizar la información más rica y los resultados más interesantes posibles. El tercer experimento tenía como objetivo primordial darle respuesta a la pregunta de qué corte, de los 189 que genera el plano coronal, contiene mayor información de interés en el diagnóstico de la enfermedad del Parkinson. Como es obvio, esta es nuestra pregunta central y el objeto de todo nuestro estudio. En la sección de experimentos se detallan los resultados, pero se puede decir que nuestro sistema es capaz de seleccionar las 10 slices más importantes y detecta a pacientes enfermos con una precisión del 73\% y un recall del 84\%. El experimento 4 estaba dedicado a la optimización vía deep learning de nuestro sistema. A pesar de que los resultados no han sido buenos, el diseño de la red ha sido enriquecedor y construye una nueva vía para el desarrollo de la biomedicina y el diagnóstico de enfemedades neurodegenerativas. 
+El sistema de ayuda al diagnóstico del Parkison desarrollado ha constado de cuatro experimentos destinados al incremento paulatino de nuestro conocimiento sobre la enfermedad y el funcionamiento del cerebro. El primero de ellos estaba destinado a, de entre los tres cortes posibles que podemos hacer para obtener una imagen de dos dimensiones (axial, coronal y sagittal), cuál es más representativa. Nuestro resultado fue contundente: el plano coronal es el más informativo de todos ellos para esta demencia. El siguiente, que tenía propósito de ahorrar coste computacional, consistía en decidir si podíamos prescindir de una parte de la imagen completa del cerebro, quedándonos con la materia gris (C1) o la materia blanca (C2). Los resultados no fueron concluyentes, por lo que optamos por tomar siempre la imagen completa, a fin de garantizar la información más rica y los resultados más interesantes posibles. El tercer experimento tenía como objetivo primordial darle respuesta a la pregunta de qué corte, de los 189 que genera el plano coronal, contiene mayor información de interés en el diagnóstico de la enfermedad del Parkinson. Como es obvio, esta es nuestra pregunta central y el objeto de todo nuestro estudio. En la sección de experimentos se detallan los resultados, pero se puede decir que nuestro sistema es capaz de seleccionar las 10 slices más importantes y detecta a pacientes enfermos con una precisión del 73\% y un recall del 84\%. El experimento 4 estaba dedicado a la optimización vía deep learning de nuestro sistema. A pesar de que los resultados no han sido buenos, el diseño de la red ha sido enriquecedor y construye una nueva vía para el desarrollo de la biomedicina y el diagnóstico de enfermedades neurodegenerativas. 
 
 \subsection{Proyectos futuros}
 
@@ -1595,6 +1641,55 @@ Desde un punto de vista más técnico, los resultados del experimento 4 confirma
 \newpage
 
 \section{Código}
+
+\subsection{Normalización}
+
+\lstinputlisting[firstline=1, lastline=67]{ppmi-normalize.m}
+
+\subsection{Sujetos}
+
+
+\lstinputlisting[firstline=1, lastline=41]{subjects.py}
+
+\subsection{Experimento 1}
+
+\lstinputlisting[firstline=1, lastline=208]{experimento1.py}
+
+\subsubsection{Resultados experimento 1}
+
+\lstinputlisting[firstline=1, lastline=83]{resultados-exp1.py}
+
+\subsection{Experimento 2}
+
+\lstinputlisting[firstline=1, lastline=114]{experimento2.py}
+
+\subsubsection{Resultados experimento 2}
+
+\lstinputlisting[firstline=1, lastline=59]{resultados-exp2.py}
+
+\subsection{Experimento 3}
+
+\lstinputlisting[firstline=1, lastline=161]{experimento3.py}
+
+\subsubsection{Resultados experimento 3}
+
+\lstinputlisting[firstline=1, lastline=59]{res-exp3.py}
+
+\subsubsection{Clasificación con los mejores cortes. Experimento 3}
+
+\lstinputlisting[firstline=1, lastline=161]{experimento3-bs.py}
+
+\subsection{Experimento 4}
+
+\lstinputlisting[firstline=1, lastline=181]{experimento4earlyStopping.py}
+
+\subsubsection{Resultados experimento 4}
+
+\lstinputlisting[firstline=1, lastline=44]{res-exp4.py}
+
+\subsubsection{Clasificación con los mejores cortes. Experimento 4}
+
+\lstinputlisting[firstline=1, lastline=182]{experimento4-bs.py}
 
 \newpage
 \section{Bibliografía}
