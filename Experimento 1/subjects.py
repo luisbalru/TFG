@@ -1,3 +1,4 @@
+# Clase para estructurar a los sujetos en memoria
 # AUTOR: LUIS BALDERAS RUIZ
 # TRABAJO FINAL DE GRADO
 
